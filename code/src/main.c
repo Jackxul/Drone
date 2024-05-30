@@ -65,7 +65,7 @@ void check(status){
  *zigzag toward the end of grid then circle back to the start
  *and circle back to the start Again
  *
- *
+ *use +/- count variable to determine the direction of zigzag
  *
  *
  *
@@ -74,8 +74,11 @@ float zigzag(int **arr, int arr_length, int arr_height){	//zigzag
 	float life = Battery_Capacity * 60.0; //to second
 	printf("Battery Capacity: %f sec\n", life);
 	int trip = 0;
+	int temp = 1;//temp variable (use to control the initial number of j(1/arr_length - 1))
+	int dir_x = 1;//direction variable (use to control the direction of zigzag)
+	bool dir_y = true;//direction variable (use to check the direction of zigzag)
 	for(int i = 1; i < arr_height; i++){
-		for(int j = 1; j < arr_length; j++){
+		for(int j = temp; j < arr_length && j > 0; j + dir_x){
 			if(arr[i][j] >= 1 && life > 0){
 				arr[i][j]--;
 				printf("Current position: %d, %d --> %d\n", i, j, arr[i][j]);
@@ -89,15 +92,20 @@ float zigzag(int **arr, int arr_length, int arr_height){	//zigzag
 				power_out_queue[0][0] = i; //Grid_Height
 				power_out_queue[0][1] = j; //Grid_Length
 				break;
-		//	}else if(){
-		//		//save the current position into the queue
-		//		break;
-		//	}
-				printf("check point 1\n");
+			}else if(dir_y & (j == arr_length - 1)){
+				temp = arr_length - 1;
+				dir_x = -1;
+				dir_y = false;
+				break;
+			}else if(!(dir_y) & (j == 1)){
+				temp = 1;
+				dir_x = 1;
+				dir_y = true;
+				break;
 			}
-			printf("check point 2\n");
-			int static count = 0;
-			printf("count: %d\n", ++count);
+			//printf("check point 2\n");
+			//int static count = 0;
+			//int staprintf("count: %d\n", ++count);
 		}
 
 	}
