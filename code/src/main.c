@@ -78,6 +78,53 @@ float zigzag(int **arr, int arr_length, int arr_height){	//zigzag
 	int dir_x = 1;//direction variable (use to control the direction of zigzag)
 	bool dir_y = true;//direction variable (use to check the direction of zigzag)
 	for(int i = 1; i < arr_height; i++){
+		for(int j = temp; j < arr_length && j > 0; j += dir_x){
+			if(arr[i][j] >= 1 && life > 0){
+				arr[i][j]--;
+				printf("Current position: %d, %d --> %d\n", i, j, arr[i][j]);
+				printf("i --> %d\n", i);
+				printf("j --> %d\n", j);
+				trip++;
+				life -= 0.5;
+			}else if(arr[i][j] >= 1 && life <= 0){
+				printf("Battery is out of power\n");
+				//save the current position into the queue
+				power_out_queue[0][0] = i; //Grid_Height
+				power_out_queue[0][1] = j; //Grid_Length
+				break;
+			}else if(arr[i][j] >= 1 && (dir_y & (j == arr_length - 1))){
+				temp = arr_length - 1;
+				dir_x = -1;
+				dir_y = false;
+				continue;
+			}else if(arr[i][j] >= 1 && (!(dir_y) & (j == 1))){
+				temp = 1;
+				dir_x = 1;
+				dir_y = true;
+				continue;
+			}else if(arr[i][j] < 1){
+				printf("Worng position\n");
+				break;
+
+			}
+			//printf("check point 2\n");
+			//int static count = 0;
+			//int staprintf("count: %d\n", ++count);
+		}
+
+	}
+	return 0;
+}
+
+
+float zamboni(int **arr, int arr_length, int arr_height){	//zamboni
+	float life = Battery_Capacity * 60.0; //to second
+	printf("Battery Capacity: %f sec\n", life);
+	int trip = 0;
+	int temp = 1;//temp variable (use to control the initial number of j(1/arr_length - 1))
+	int dir_x = 1;//direction variable (use to control the direction of zigzag)
+	bool dir_y = true;//direction variable (use to check the direction of zigzag)
+	for(int i = 1; i < arr_height; i++){
 		for(int j = temp; j < arr_length && j > 0; j + dir_x){
 			if(arr[i][j] >= 1 && life > 0){
 				arr[i][j]--;
@@ -92,16 +139,20 @@ float zigzag(int **arr, int arr_length, int arr_height){	//zigzag
 				power_out_queue[0][0] = i; //Grid_Height
 				power_out_queue[0][1] = j; //Grid_Length
 				break;
-			}else if(dir_y & (j == arr_length - 1)){
+			}else if(arr[i][j] >= 1 && (dir_y & (j == arr_length - 1))){
 				temp = arr_length - 1;
 				dir_x = -1;
 				dir_y = false;
 				break;
-			}else if(!(dir_y) & (j == 1)){
+			}else if(arr[i][j] >= 1 && (!(dir_y) & (j == 1))){
 				temp = 1;
 				dir_x = 1;
 				dir_y = true;
 				break;
+			}else if(arr[i][j] < 1){
+				printf("Worng position\n");
+				break;
+
 			}
 			//printf("check point 2\n");
 			//int static count = 0;
@@ -119,7 +170,13 @@ int main(int argc,char *argv[]){
 		return 0;
 	}
 	//argv
-	printf("Charging station number: %s\n", argv[1]);
+	
+	int CS_num = atoi(argv[1]);	//charging station number
+	
+	//printf("Charging station number: %s\n", argv[1]);
+	printf("Charging station number: %d\n", CS_num);
+	
+
 	//malloc 2D array
 	int **Array = (int **)malloc((Grid_Length + 2) * sizeof(int *));
 	for (int i = 0; i < Grid_Height; i++)
