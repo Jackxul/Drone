@@ -5,8 +5,8 @@
 #include<time.h>
 
 //define
-#define Grid_Length 30
-#define Grid_Height 30
+#define Grid_Length 10
+#define Grid_Height 10
 #define Speed 2 /* (m/s) */		// = (1m/0.5s)
 #define Droplet 330 /* (m^3/s) */
 #define Height 5 /* (m) */
@@ -79,40 +79,60 @@ float zigzag(int **arr, int arr_length, int arr_height){	//zigzag
 	bool dir_y = true;//direction variable (use to check the direction of zigzag)
 	for(int i = 1; i < arr_height; i++){
 		for(int j = temp; j < arr_length && j > 0; j += dir_x){
+			//debug code
+			//debug code
 			if(arr[i][j] >= 1 && life > 0){
-				arr[i][j]--;
+				arr[i][j] = 0;
 				printf("Current position: %d, %d --> %d\n", i, j, arr[i][j]);
 				printf("i --> %d\n", i);
 				printf("j --> %d\n", j);
 				trip++;
 				life -= 0.5;
+				#ifdef DEBUG_MODE
+				print_array(arr, arr_length, arr_height);
+				#endif
 			}else if(arr[i][j] >= 1 && life <= 0){
 				printf("Battery is out of power\n");
 				//save the current position into the queue
 				power_out_queue[0][0] = i; //Grid_Height
 				power_out_queue[0][1] = j; //Grid_Length
-				break;
-			}else if(arr[i][j] >= 1 && (dir_y & (j == arr_length - 1))){
-				temp = arr_length - 1;
+
+				exit(0);
+			}else if(dir_y & (j == arr_length - 1)){
+				printf("temp change = %d\n", temp);
+				temp = arr_length - 2;
 				dir_x = -1;
 				dir_y = false;
-				continue;
-			}else if(arr[i][j] >= 1 && (!(dir_y) & (j == 1))){
-				temp = 1;
-				dir_x = 1;
-				dir_y = true;
+				printf("check point --> \n");
+				//print dir_y
+				printf("dir_y = %d\n", dir_y);
+				printf("j = %d\n", j);
 				continue;
 			}else if(arr[i][j] < 1){
+				printf("i = %d\n",i);
+				printf("j = %d\n",j);
+				printf("arr[i][j] = %d\n", arr[i][j]);
+				printf("temp = %d\n", temp);
 				printf("Worng position\n");
 				break;
 
+			}
+			if(!(dir_y) & (j == 1)){
+				temp = 1;
+				printf("temp change = %d\n", temp);
+				dir_x = 1;
+				dir_y = true;
+				//print dir_y
+				printf("dir_y = %d\n", dir_y);
+				printf("j = %d\n", j);
+				continue;
 			}
 			//printf("check point 2\n");
 			//int static count = 0;
 			//int staprintf("count: %d\n", ++count);
 		}
-
 	}
+	printf("life: %f\n", life);
 	return 0;
 }
 
@@ -150,8 +170,12 @@ float zamboni(int **arr, int arr_length, int arr_height){	//zamboni
 				dir_y = true;
 				break;
 			}else if(arr[i][j] < 1){
+				printf("i = %d\n",i);
+				printf("j = %d\n",j);
+				printf("arr[i][j] = %d\n", arr[i][j]);
+				printf("temp = %d\n", temp);
 				printf("Worng position\n");
-				break;
+				//break;
 
 			}
 			//printf("check point 2\n");
