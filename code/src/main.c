@@ -23,6 +23,7 @@
 #define Battery_Capacity  116 /* (min) */
 #define Battery_Voltage  52 /* (V) */
 #define Battery_Weight  8 /* (kg) */
+#define Battery_V BV //Battery Variable
 #define UAV_Postion_up 1
 #define UAV_Postion_down 2
 #define UAV_Postion_left 3
