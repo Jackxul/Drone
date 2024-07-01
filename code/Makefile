@@ -7,21 +7,35 @@ I_DIR:= include
 SRC:=$(wildcard $(S_DIR)/*.c)
 OBJ:=$(patsubst $(S_DIR)/%.c,$(B_DIR)/%.o,$(SRC))
 
+
 db ?= 0
+test ?= 0
+grid ?= 0
 ifeq ($(db), 1)
 	CFLAGS += -D DEBUG_MODE=1
+else ifeq ($(test), 1)
+	CFLAGS += -D TEST_MODE=1
 endif
 
+ifneq ($(grid), 0)
+	CFLAGS += -D GRID_SIZE=$(grid)
+endif
 exe:=start
 
 $(E_DIR)/$(exe): $(OBJ)
 	$(CC) $(OBJ) -o $@
 ifeq ($(db), 1)
-		@echo "Makefile Debug Version: Done."
+		@echo "Makefile Debug MODE: Done."
 		@echo "**********************************"
-		@echo "* step by step debug mode        *"
+		@echo "* type make only for Normal Mode *"
+		@echo "* set test to 1 for TEST MODE    *"
 		@echo "**********************************"
-else
+else ifeq ($(test), 1)
+		@echo "Makefile Test MODE: Done."
+		@echo "**********************************"
+		@echo "* type make only for Normal Mode *"
+		@echo "* set db to 1 for DEBUG MODE     *"
+		@echo "**********************************"
 	@echo "Makefile: Done."
 endif
 	@tree .
