@@ -138,6 +138,10 @@ int main(int argc,char *argv[]){
 	zigzag(Array, Grid_Length, Grid_Height);
 	//zamboni(Array, Grid_Length, Grid_Height);
 	print_array(Array, Grid_Length, Grid_Height);
+	for (int i = 0; i < Grid_Length; i++)
+	{
+		free(Array[i]);
+	}
 	free(Array);
 	return 0;
 }
