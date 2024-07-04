@@ -23,3 +23,18 @@ void print_array(int **arr, int arr_length, int arr_height){
 		printf("\n");
 	}
 }
+void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height){
+/*
+ *up 	--> 1
+ *down	--> 2
+ *left	--> 3
+ *right	--> 4
+ */	
+	for(int count = 0; count < CS_num; count++){
+
+	}
+	
+	
+	
+	
+}
