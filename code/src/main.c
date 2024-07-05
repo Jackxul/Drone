@@ -1,6 +1,6 @@
 #include "common.h"
 #include "zigzag.h"
-//#include "zamboni.h"
+#include "zamboni.h"
 
 void check(bool status ,int Current_Speed, int Current_Height){	
 	if(!status){
@@ -62,8 +62,8 @@ int main(int argc,char *argv[]){
 //	}
 
 	
-	zigzag(Array, Grid_Length, Grid_Height);
-	//zamboni(Array, Grid_Length, Grid_Height);
+	//zigzag(Array, Grid_Length, Grid_Height);
+	zamboni(Array, Grid_Length, Grid_Height);
 	print_array(Array, Grid_Length, Grid_Height);
 	for (int i = 0; i < Grid_Length; i++)
 	{

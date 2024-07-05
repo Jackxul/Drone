@@ -5,13 +5,23 @@ float zamboni(int **arr, int arr_length, int arr_height) {
 	printf("Battery Capacity: %f sec\n", life);
 	float trip = Pesticide;
 	int start_row = 1;
-	int end_row = start_row + (arr_height % 2 == 0 ? arr_height / 2 : (arr_height + 1) / 2);
+	int end_row = arr_height / 2;
+	int temp_row = 1;
+	int temp_col = 1;
 #ifdef DEBUG_MODE
 	printf("start_row: %d\n", start_row);
 	printf("end_row: %d\n", end_row);
 #endif
+#ifdef GRID_SIZE
+	printf("start_row: %d\n", start_row);
+	printf("end_row: %d\n", end_row);
+#endif
 	
+	for(int i = temp_row; i < arr_length; i++){
+		
 
+
+	}
 	//int temp = 1;//temp variable (use to control the initial number of j(1/arr_length - 1))
 	//int dir_x = 1;//direction variable (use to control the direction of zigzag)
 	//bool dir_y = true;//direction variable (use to check the direction of zigzag)
