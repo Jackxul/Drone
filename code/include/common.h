@@ -42,6 +42,8 @@ enum map_location{
 	RIGHT = 4
 };
 
+unsigned int combine_primes_with_time(unsigned int prime1, unsigned int prime2);
+void set_random_seed();
 int rand_time(int min, int max);
 //sqrt
 double distance(int x1, int y1, int x2, int y2);

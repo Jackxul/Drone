@@ -18,7 +18,6 @@ bool status = true; //true: working, false: need to charge
  *
  *zigzag toward the end of grid then circle back to the start
  *and circle back to the start Again
- *
  *use +/- count variable to determine the direction of zigzag
  *
  *
