@@ -7,6 +7,8 @@
 #include<math.h>
 #include<time.h>
 
+#define PRIME1 31
+#define PRIME2 37
 #ifdef TEST_MODE
 #define Grid_Length 10
 #define Grid_Height 10
@@ -33,6 +35,12 @@
 #define Pesticide 8 /* (L) */
 #define N_F 0.66 /* (L/min) */
 
+enum map_location{
+	UP = 1,
+	DOWN = 2,
+	LEFT = 3,
+	RIGHT = 4
+};
 
 int rand_time(int min, int max);
 //sqrt
@@ -40,5 +48,5 @@ double distance(int x1, int y1, int x2, int y2);
 //time calculate
 float route_time(double route, int speed);
 void print_array(int **arr, int arr_length, int arr_height);
-
+void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
 #endif /* COMMON_H */

@@ -3,8 +3,9 @@
 #define ZAMBONI_H
 
 #include <common.h>
-int lock_col(bool ,int col);
-int lock_row(bool ,int row);
+void set_lock();
+int set_col(int col , int value);
+int set_row(int row , int value);
 void visit(int **arr, int point_x, int point_y);
 float zamboni(int **arr, int arr_length, int arr_height);	//zamboni
 

@@ -24,7 +24,9 @@ int main(int argc,char *argv[]){
 	//printf("Charging station number: %s\n", argv[1]);
 	printf("Charging station number: %d\n", CS_num);
 	
-
+	//malloc 1D array
+	int *cs_arr = (int *)malloc(CS_num * sizeof(int));//array for charging station      -->hash rule = ((side label) * grid_length + station_position)
+							  
 	//malloc 2D array
 	int **Array = (int **)malloc((Grid_Length + 2) * sizeof(int *));
 	for (int i = 0; i < Grid_Height; i++)
@@ -50,6 +52,7 @@ int main(int argc,char *argv[]){
 				}
 			}
 	}
+	set_charge_station(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
 	//print array
 	print_array(Array, Grid_Length, Grid_Height);
 //	for (int i = 1; i < Grid_Length; i++)
@@ -62,8 +65,8 @@ int main(int argc,char *argv[]){
 //	}
 
 	
-	//zigzag(Array, Grid_Length, Grid_Height);
-	zamboni(Array, Grid_Length, Grid_Height);
+	zigzag(Array, Grid_Length, Grid_Height);
+	//zamboni(Array, Grid_Length, Grid_Height);
 	print_array(Array, Grid_Length, Grid_Height);
 	for (int i = 0; i < Grid_Length; i++)
 	{
