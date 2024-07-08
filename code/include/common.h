@@ -51,4 +51,5 @@ double distance(int x1, int y1, int x2, int y2);
 float route_time(double route, int speed);
 void print_array(int **arr, int arr_length, int arr_height);
 void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
+
 #endif /* COMMON_H */
