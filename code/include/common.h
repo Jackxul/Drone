@@ -6,20 +6,27 @@
 #include<stdbool.h>
 #include<math.h>
 #include<time.h>
+#include<stdarg.h>
+
+extern FILE *fp;
+
+#ifdef TEST_MODE
+	#define Grid_Length 10
+	#define Grid_Height 10
+#else
+	#define Grid_Length 30
+	#define Grid_Height 30
+#endif
+
+#ifdef GRID_SIZE
+	#undef Grid_Length
+	#undef Grid_Height
+	#define Grid_Length GRID_SIZE
+	#define Grid_Height GRID_SIZE
+#endif
 
 #define PRIME1 31
 #define PRIME2 37
-#ifdef TEST_MODE
-#define Grid_Length 10
-#define Grid_Height 10
-#else
-#define Grid_Length 30
-#define Grid_Height 30
-#endif
-#ifdef GRID_SIZE
-#define Grid_Length GRID_SIZE
-#define Grid_Height GRID_SIZE
-#endif
 #define Speed 2 /* (m/s) */		// = (1m/0.5s)
 #define Droplet 330 /* (m^3/s) */
 #define Height 5 /* (m) */
@@ -28,12 +35,10 @@
 #define Battery_Voltage  52 /* (V) */
 #define Battery_Weight  8 /* (kg) */
 #define Battery_V BV //Battery Variable
-#define UAV_Postion_up 1
-#define UAV_Postion_down 2
-#define UAV_Postion_left 3
-#define UAV_Postion_right 4
 #define Pesticide 8 /* (L) */
-#define N_F 0.66 /* (L/min) */
+#define N_F 0.61 /* (L/min) */
+#define P_H_TCrop 47//Pesticide per Hectare for Test Crop
+#define P_H_CCrop 1.5//Pesticide per Hectare for Current Crop
 
 enum map_location{
 	UP = 1,
@@ -42,14 +47,16 @@ enum map_location{
 	RIGHT = 4
 };
 
+// Declare the custom printf function
+void JPrintf(const char *format, ...);
 unsigned int combine_primes_with_time(unsigned int prime1, unsigned int prime2);
 void set_random_seed();
 int rand_time(int min, int max);
 //sqrt
 double distance(int x1, int y1, int x2, int y2);
 //time calculate
-float route_time(double route, int speed);
 void print_array(int **arr, int arr_length, int arr_height);
 void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
-
+void set_current_speed(int *Current_Speed);
+void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height, int point_cx, int point_cy, int *dx, int *dy);
 #endif /* COMMON_H */
