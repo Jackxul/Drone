@@ -28,12 +28,10 @@
 #define Battery_Voltage  52 /* (V) */
 #define Battery_Weight  8 /* (kg) */
 #define Battery_V BV //Battery Variable
-#define UAV_Postion_up 1
-#define UAV_Postion_down 2
-#define UAV_Postion_left 3
-#define UAV_Postion_right 4
 #define Pesticide 8 /* (L) */
-#define N_F 0.66 /* (L/min) */
+#define N_F 0.61 /* (L/min) */
+#define P_H_TCrop 47//Pesticide per Hectare for Test Crop
+#define P_H_CCrop 1.5//Pesticide per Hectare for Current Crop
 
 enum map_location{
 	UP = 1,
@@ -51,5 +49,6 @@ double distance(int x1, int y1, int x2, int y2);
 float route_time(double route, int speed);
 void print_array(int **arr, int arr_length, int arr_height);
 void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
-
+void set_current_speed(int *Current_Speed);
+void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height, int point_cx, int point_cy, int *dx, int *dy);
 #endif /* COMMON_H */

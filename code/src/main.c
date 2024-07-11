@@ -53,14 +53,11 @@ int main(int argc,char *argv[]){
 			}
 	}
 	set_random_seed();
-	printf("rand = %d\n", rand());
-	printf("rand = %d\n", rand());
-	printf("rand = %d\n", rand());
-	printf("rand = %d\n", rand());
-	printf("rand = %d\n", rand());
+	
 	set_charge_station(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
+
 	//print array
-	print_array(Array, Grid_Length, Grid_Height);
+//	print_array(Array, Grid_Length, Grid_Height);
 //	for (int i = 1; i < Grid_Length; i++)
 //	{
 //		for (int j = 0; j < Grid_Height; j++)
@@ -71,12 +68,17 @@ int main(int argc,char *argv[]){
 //	}
 
 	
-	//zigzag(Array, Grid_Length, Grid_Height);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
 	//zamboni(Array, Grid_Length, Grid_Height);
+#ifdef DEBUG_MODE
 	print_array(Array, Grid_Length, Grid_Height);
-	for(int i = 0; i < CS_num; i++){
-		printf("Charging station %d: %d\n", i, cs_arr[i]);
-	}
+#elif TEST_MODE
+	print_array(Array, Grid_Length, Grid_Height);
+#endif
+	
+//	for(int i = 0; i < CS_num; i++){
+//		printf("Charging station %d: %d\n", i, cs_arr[i]);
+//	}
 	//free 1D array
 	free(cs_arr);
 	//free 2D array
