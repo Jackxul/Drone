@@ -1,5 +1,25 @@
 #include <common.h>
 
+int single_cs[4] = {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+int double_cs[6][2] = {
+	{UP,DOWN},
+	{UP,LEFT},
+	{UP,RIGHT},
+	{DOWN,LEFT},
+	{DOWN,RIGHT},
+	{LEFT,RIGHT}
+};
+int triple_cs[4][3] = {
+	{UP,DOWN,LEFT},
+	{UP,DOWN,RIGHT},
+	{UP,LEFT,RIGHT},
+	{DOWN,LEFT,RIGHT}
+};
 
 FILE *fp;
 // Declare the custom printf function
