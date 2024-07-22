@@ -35,10 +35,15 @@ extern FILE *fp;
 #define Battery_Voltage  52 /* (V) */
 #define Battery_Weight  8 /* (kg) */
 #define Battery_V BV //Battery Variable
+#define Battery_Multi CV //Battery Multi_Charge Variable
 #define Pesticide 8 /* (L) */
 #define N_F 0.61 /* (L/min) */
 #define P_H_TCrop 47//Pesticide per Hectare for Test Crop
 #define P_H_CCrop 1.5//Pesticide per Hectare for Current Crop
+#define Battery_Ah 40 /* (Ah) */
+#define Battery_Num 4 /* (number) */
+#define Joules Battery_Voltage * Battery_Ah * 3600 * Battery_Num /* (J) */
+#define Power_Watt 4292.7 /* (W) */
 
 enum map_location{
 	UP = 1,
@@ -59,4 +64,5 @@ void print_array(int **arr, int arr_length, int arr_height);
 void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
 void set_current_speed(int *Current_Speed);
 void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height, int point_cx, int point_cy, int *dx, int *dy);
+void set_multi(float *time);
 #endif /* COMMON_H */

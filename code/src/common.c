@@ -1,25 +1,5 @@
 #include <common.h>
 
-int single_cs[4] = {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-int double_cs[6][2] = {
-	{UP,DOWN},
-	{UP,LEFT},
-	{UP,RIGHT},
-	{DOWN,LEFT},
-	{DOWN,RIGHT},
-	{LEFT,RIGHT}
-};
-int triple_cs[4][3] = {
-	{UP,DOWN,LEFT},
-	{UP,DOWN,RIGHT},
-	{UP,LEFT,RIGHT},
-	{DOWN,LEFT,RIGHT}
-};
 
 FILE *fp;
 // Declare the custom printf function
@@ -122,13 +102,13 @@ void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int 
 	for(int count = 0; count < CS_num; count++){
 		int cs_position = cs_arr[count];
 		if(cs_position / arr_length == UP){
-			arr[0][cs_position % (arr_length - 1)] = -7;	
+			arr[0][cs_position % (arr_length - 1)] = -8;	
 		}else if(cs_position / arr_length == DOWN){
-			arr[arr_height - 1][cs_position % (arr_length - 1) + 1] = -7;
+			arr[arr_height - 1][cs_position % (arr_length - 1) + 1] = -8;
 		}else if(cs_position / arr_length == LEFT){
-			arr[cs_position % (arr_length - 1) + 1][0] = -7;
+			arr[cs_position % (arr_length - 1) + 1][0] = -8;
 		}else if(cs_position / arr_length == RIGHT){
-			arr[cs_position % (arr_length - 1)][arr_height - 1] = -7;
+			arr[cs_position % (arr_length - 1)][arr_height - 1] = -8;
 		}else{
 			exit(0);
 		}
@@ -178,4 +158,7 @@ void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int
 			*dy = temp_dy;
 		}
 	}
+}
+void set_multi(float *time){
+	*time *= Battery_Multi;
 }

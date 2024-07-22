@@ -88,7 +88,8 @@ int main(int argc,char *argv[]){
 	
 #ifdef ZAMBONI_MODE
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
-	zamboni(Array, Grid_Length, Grid_Height);
+	//zamboni(Array, Grid_Length, Grid_Height);
+	zamboni_path(Array, Grid_Length, Grid_Height);
 #else
 	zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
 #endif

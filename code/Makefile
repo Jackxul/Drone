@@ -11,11 +11,12 @@ OBJ:=$(patsubst $(S_DIR)/%.c,$(B_DIR)/%.o,$(SRC))
 
 
 BV = 0.7261 
+CV = 0.87389
 db ?= 0
 test ?= 0
 grid ?= 0
 za ?= 0
-CFLAGS += -D BV=$(BV)
+CFLAGS += -D BV=$(BV) -D CV=$(CV)
 
 
 ifeq ($(db), 1)

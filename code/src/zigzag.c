@@ -23,6 +23,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 	float life = Battery_Capacity * 60.0; //to second
 	JPrintf("Battery Capacity: %f sec\n", life);
 	float trip = Pesticide;
+	float energy = 0;
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
@@ -38,8 +39,8 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 			if(arr[i][j] >= 1 && life > 0 && trip > 0){
 				trip -= arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 				used_pesticide += arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
+				JPrintf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
 				arr[i][j] = 0;
-				JPrintf("Current position: %d, %d --> %d\n", i, j, arr[i][j]);
 //				JPrintf("S_trip = %f\n", trip);
 #ifdef DEBUG_MODE
 				JPrintf("i --> %d\n", i);
@@ -47,6 +48,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 #endif
 				life -= 0.5;
 				used_time += 0.5;
+				energy += 0.5;
 
 #ifdef DEBUG_MODE
 				print_array(arr, arr_length, arr_height);
@@ -82,9 +84,11 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				if(CS_num == 1){
 					life -= (single_zigzag_charge( i , j , Current_Speed ) / 2 ); //half of the time is used to fly to the power out position
 					used_time += single_zigzag_charge( i , j , Current_Speed );
+					energy += single_zigzag_charge( i , j , Current_Speed );
 				}else{
 					life -= (multi_zigzag_charge( i , j , nearest_cs_dx, nearest_cs_dy , Current_Speed ) / 2); //half of the time is used to fly to the power out position
 				 	used_time += multi_zigzag_charge( i , j , nearest_cs_dx, nearest_cs_dy , Current_Speed );
+					energy += multi_zigzag_charge( i , j , nearest_cs_dx, nearest_cs_dy , Current_Speed );
 				}
 
 				JPrintf("*    Charging . . . . . . . . . . . . . .     *\n");
@@ -102,7 +106,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 					JPrintf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n)", nearest_cs_dx, nearest_cs_dy, i, j);
 				}
 				
-				JPrintf("*    Current Speed: %2d                       *\n", Current_Speed);
+				JPrintf("*    Current Speed: %2d                        *\n", Current_Speed);
 				JPrintf("***********************************************\n");
 				nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
 
@@ -110,8 +114,8 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				trip -= arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 
 				used_pesticide += arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
+				JPrintf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
 				arr[i][j] = 0;
-				JPrintf("Current position: %d, %d --> %d\n", i, j, arr[i][j]);
 #ifdef DEBUG_MODE
 				JPrintf("CHARGING_DONE\n");
 				JPrintf("i --> %d\n", i);
@@ -141,6 +145,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				temp = arr_length - 2;
 				dir_x = -1;
 				dir_y = false;
+				energy += 2.5;
 				//JPrintf("check point --> \n");
 #ifdef DEBUG_MODE
 				JPrintf("dir_y = %d\n", dir_y);
@@ -165,18 +170,23 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				JPrintf("temp change = %d\n", temp);
 				JPrintf("dir_y = %d\n", dir_y);
 				JPrintf("j = %d\n", j);
+				energy += 2.5;
 #endif
 			}
 			//JPrintf("check point 2\n");
 			//int static count = 0;
 		}
 	}
+//#ifdef BV
+//	set_multi(&used_time);
+//#endif
 //	JPrintf("Battery_life: %.4f\n", life);
 //	JPrintf("Pesticide_amount: %.4f\n", trip);
 	JPrintf(" ====================================================\n");
 	JPrintf("|   Used time: %18.4f                    |\n", used_time);
 	JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
 	JPrintf("|   Charging time count: %2d                          |\n", charge_time);
+	JPrintf("|   Energy: %28.4f             |\n", energy * Power_Watt);
 	JPrintf(" ====================================================\n");
 	return 0;
 }

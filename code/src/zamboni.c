@@ -76,3 +76,23 @@ float zamboni(int **arr, int arr_length, int arr_height) {
 	printf("Pesticide_amount: %.4f\n", trip);
 	return 0;
 }
+
+void zamboni_path(int **arr, int arr_length, int arr_height) {
+    int direction = 1;  // 1 for right, -1 for left
+    for (int i = 0; i < arr_length; i++) {
+        if (direction == 1) {
+            for (int j = 0; j < arr_height; j++) {
+                printf("Visiting arr[%d][%d]\n", i, j);
+                arr[i][j] = 0;  // Mark as visited
+		print_array(arr, arr_length, arr_height);
+            }
+        } else {
+            for (int j = arr_height - 1; j >= 0; j--) {
+                printf("Visiting arr[%d][%d]\n", i, j);
+                arr[i][j] = 0;  // Mark as visited
+		print_array(arr, arr_length, arr_height);
+            }
+        }
+        direction = -direction;  // Change direction for next row
+    }
+}
