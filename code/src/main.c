@@ -22,6 +22,8 @@ int main(int argc,char *argv[]){
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	
+	int square_l = Grid_Length * 3 - 2;
+
 	//Create file name based on current time
 	char filename[100];
 #ifdef ZAMBONI_MODE
@@ -45,23 +47,23 @@ int main(int argc,char *argv[]){
 	int *cs_arr = (int *)malloc(CS_num * sizeof(int));//array for charging station      -->hash rule = ((side label) * grid_length + station_position)
 							  
 	//malloc 2D array
-	int **Array = (int **)malloc((Grid_Length + 2) * sizeof(int *));
-	for (int i = 0; i < Grid_Height; i++)
+	int **Array = (int **)malloc((square_l) * sizeof(int *));
+	for (int i = 0; i < square_l; i++)
 	{
-		Array[i] = (int *)malloc((Grid_Height + 2) * sizeof(int));
+		Array[i] = (int *)malloc((square_l) * sizeof(int));
 	}
 	//start point Array[1][1]
 	
 	//initialize array	
-	for (int i = 0; i < Grid_Length; i++)
+	for (int i = 0; i < square_l; i++)
 	{
-			for(int j = 0; j < Grid_Height; j++)
+			for(int j = 0; j < square_l; j++)
 			{
 				//boarder
-				if(i == 0 || i == Grid_Length - 1 || j == 0 || j == Grid_Height - 1){
+				if(i == 0 || i == Grid_Length - 1 || i == 2 * Grid_Length - 2 || i == 3 * Grid_Length - 3 || j == 0 || j == Grid_Height - 1 || j == 2 * Grid_Height - 2 || j == 3 * Grid_Height - 3){
 					Array[i][j] = -1;
 				//double spray zone
-				}else if(i > 0 && i <= 2 || i < Grid_Length - 1 && i >= Grid_Length - 3 || j > 0 && j <= 2 || j < Grid_Height - 1 && j >= Grid_Height - 3){
+				}else if(i > 0 && i <= 2 || i < Grid_Length - 1 && i >= Grid_Length - 3 || i >= Grid_Length && i < Grid_Length + 2 || i >= 2 * Grid_Length - 4 && i < 2 * Grid_Length - 2 || i >= 2 * Grid_Length - 1 && i < 2 * Grid_Length + 1 || i >= 3 * Grid_Length - 5 && i < 3 * Grid_Length - 3 ||j > 0 && j <= 2 || j < Grid_Height - 1 && j >= Grid_Height - 3 || j >= Grid_Height && j < Grid_Height + 2 || j >= 2 * Grid_Height - 4 && j < 2 * Grid_Height - 2 || j >= 2 * Grid_Height - 1 && j < 2 * Grid_Height + 1 || j >= 3 * Grid_Height - 5 && j < 3 * Grid_Height - 3){
 					Array[i][j] = 2;
 				//single spray zone
 				}else{
@@ -71,27 +73,18 @@ int main(int argc,char *argv[]){
 	}
 	set_random_seed();
 	
-	set_charge_station(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
+//	set_charge_station(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
 
 	//print array
-//	print_array(Array, Grid_Length, Grid_Height);
-//	for (int i = 1; i < Grid_Length; i++)
-//	{
-//		for (int j = 0; j < Grid_Height; j++)
-//		{
-//			printf("%2d ", Array[i][j]);
-//		}
-//		printf("\n");
-//	}
+	print_array(Array, square_l, square_l);
 
 	
 	
 #ifdef ZAMBONI_MODE
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
-	//zamboni(Array, Grid_Length, Grid_Height);
-	zamboni_path(Array, Grid_Length, Grid_Height);
+	zamboni(Array, Grid_Length, Grid_Height);
 #else
-	zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
+	zigzag(Array, cs_arr, CS_num, 30, 1);
 #endif
 
 #ifdef DEBUG_MODE
@@ -99,14 +92,14 @@ int main(int argc,char *argv[]){
 #elif TEST_MODE
 	print_array(Array, Grid_Length, Grid_Height);
 #endif
-	
+
 //	for(int i = 0; i < CS_num; i++){
 //		printf("Charging station %d: %d\n", i, cs_arr[i]);
 //	}
 	//free 1D array
 	free(cs_arr);
 	//free 2D array
-	for (int i = 0; i < Grid_Length; i++)
+	for (int i = 0; i < square_l; i++)
 	{
 		free(Array[i]);
 	}

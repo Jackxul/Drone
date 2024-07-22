@@ -19,7 +19,7 @@ bool status = true; //true: working, false: need to charge
  *
  * */
 
-float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height){	//zigzag
+float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	//zigzag
 	float life = Battery_Capacity * 60.0; //to second
 	JPrintf("Battery Capacity: %f sec\n", life);
 	float trip = Pesticide;
@@ -27,13 +27,13 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
-	int temp = 1;//temp variable (use to control the initial number of j(1/arr_length - 1))
+	int temp = base;//base variable (use to control the initial number of j(1/square_length - 1))
 	int dir_x = 1;//direction variable (use to control the direction of zigzag)
 	bool dir_y = true;//direction variable (use to check the direction of zigzag)
 	int nearest_cs_dx = 0;
 	int nearest_cs_dy = 0;
-	for(int i = 1; i < arr_height; i++){
-		for(int j = temp; j < arr_length && j > 0; j += dir_x){
+	for(int i = 1; i < square_length; i++){
+		for(int j = temp; j < square_length && j > 0; j += dir_x){
 			//debug code
 			//debug code
 			if(arr[i][j] >= 1 && life > 0 && trip > 0){
@@ -51,9 +51,9 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				energy += 0.5;
 
 #ifdef DEBUG_MODE
-				print_array(arr, arr_length, arr_height);
+				print_array(arr, square_length, square_length);
 #elif TEST_MODE
-				print_array(arr, arr_length, arr_height);
+				print_array(arr, square_length, square_length);
 #endif
 			}else if(arr[i][j] >= 1 && life <= 0 && trip > 0){
 				JPrintf("Battery is out of power\n");
@@ -68,7 +68,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				if(CS_num == 1){
 					JPrintf("*    Position: ( %3d , %3d ) --> ( 1 , 1 )    *\n", i, j);
 				}else{
-					find_nearest_cs(cs_arr, CS_num, arr_length, arr_height, i, j, &nearest_cs_dx, &nearest_cs_dy);
+					find_nearest_cs(cs_arr, CS_num, square_length, square_length, i, j, &nearest_cs_dx, &nearest_cs_dy);
 					JPrintf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n", i, j, nearest_cs_dx, nearest_cs_dy);
 				}
 				
@@ -125,9 +125,9 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				used_time += 0.5;
 
 #ifdef DEBUG_MODE
-				print_array(arr, arr_length, arr_height);
+				print_array(arr, square_length, square_length);
 #elif TEST_MODE
-				print_array(arr, arr_length, arr_height);
+				print_array(arr, square_length, square_length);
 #endif
 
 
@@ -138,11 +138,11 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 				 *do pesticide refill and calculation
 				 */
 				exit(0);
-			}else if(dir_y & (j == arr_length - 1)){
+			}else if(dir_y & (j == square_length - 1)){
 #ifdef DEBUG_MODE
 				JPrintf("temp change = %d\n", temp);
 #endif
-				temp = arr_length - 2;
+				temp = square_length - 2;
 				dir_x = -1;
 				dir_y = false;
 				energy += 2.5;
@@ -163,7 +163,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height
 
 			}
 			if(!(dir_y) & (j == 1)){
-				temp = 1;
+				temp = base;
 				dir_x = 1;
 				dir_y = true;
 #ifdef DEBUG_MODE
