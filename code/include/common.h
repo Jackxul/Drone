@@ -52,6 +52,13 @@ enum map_location{
 	LEFT = 3,
 	RIGHT = 4
 };
+enum cs_location{
+	GRID_MIDDLE = 0,
+	GRID_UP = 1,
+	GRID_DOWN = 2,
+	GRID_LEFT = 3,
+	GRID_RIGHT = 4
+};
 
 
 // Declare the custom printf function
@@ -63,7 +70,7 @@ int rand_time(int min, int max);
 double distance(int x1, int y1, int x2, int y2);
 //time calculate
 void print_array(int **arr, int arr_length, int arr_height);
-void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height);
+void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height);
 void set_current_speed(int *Current_Speed);
 void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height, int point_cx, int point_cy, int *dx, int *dy);
 void set_multi(float *time);

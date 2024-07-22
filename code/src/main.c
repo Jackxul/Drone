@@ -55,8 +55,20 @@ int main(int argc,char *argv[]){
 	//printf("Charging station number: %s\n", argv[1]);
 	printf("Charging station number: %d\n", CS_num);
 	
-	//malloc 1D array
-	int *cs_arr = (int *)malloc(CS_num * sizeof(int));//array for charging station      -->hash rule = ((side label) * grid_length + station_position)
+	//malloc 2D array
+	int **cs_arr = (int **)malloc(5 * sizeof(int *));
+	for (int i = 0; i < 5; i++)
+	{
+		cs_arr[i] = (int *)malloc(CS_num * sizeof(int));//array for charging station      -->hash rule = ((side label) * grid_length + station_position)
+	}
+	//initialize array
+	for (int i = 0; i < 5; i++)
+	{
+		for(int j = 0; j < CS_num; j++)
+		{
+			cs_arr[i][j] = -1;
+		}
+	}
 							  
 	//malloc 2D array
 	int **Array = (int **)malloc((square_l) * sizeof(int *));
@@ -64,7 +76,6 @@ int main(int argc,char *argv[]){
 	{
 		Array[i] = (int *)malloc((square_l) * sizeof(int));
 	}
-	//start point Array[1][1]
 	
 	//initialize array	
 	for (int i = 0; i < square_l; i++)
@@ -85,7 +96,7 @@ int main(int argc,char *argv[]){
 	}
 	set_random_seed();
 	
-//	set_charge_station(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
+	set_charge_station(Array, cs_arr, CS_num, Grid_Length, square_l);
 
 	//print array
 	print_array(Array, square_l, square_l);
@@ -113,7 +124,11 @@ int main(int argc,char *argv[]){
 //	for(int i = 0; i < CS_num; i++){
 //		printf("Charging station %d: %d\n", i, cs_arr[i]);
 //	}
-	//free 1D array
+	//free 2D array
+	for (int i = 0; i < 5; i++)
+	{
+		free(cs_arr[i]);
+	}
 	free(cs_arr);
 	//free 2D array
 	for (int i = 0; i < square_l; i++)

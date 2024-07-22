@@ -68,7 +68,7 @@ void print_array(int **arr, int arr_length, int arr_height){
 		printf("\n");
 	}
 }
-void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int arr_height){
+void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int square_l){
 /*
  *up 	--> 1
  *down	--> 2
@@ -77,42 +77,55 @@ void set_charge_station(int **arr, int *cs_arr, int CS_num, int arr_length, int 
  */	
 	int index = 0;
 	int rand_temp = 0;
-	// n * arr_length + 0 ~ arr_height - 1 //預留一位給下一個方向當起始頭
+	// n * arr_length + 0 ~ arr_length - 1 //預留一位給下一個方向當起始頭
 	switch(CS_num){
 		case 1://select a direction ramdomly from single_cs array
 		       	rand_temp = rand() % 4;
-			cs_arr[index] = single_cs[rand_temp] * arr_length + (rand() % (arr_height - 1));
+			cs_arr[GRID_MIDDLE][index] = single_cs[rand_temp] * arr_length + (rand() % (arr_length - 1));
 			break;
 		case 2:
 			rand_temp = rand() % 6;
-			cs_arr[index++] = double_cs[rand_temp][0] * arr_length + (rand() % (arr_height - 1));
-			cs_arr[index] = double_cs[rand_temp][1] * arr_length + (rand() % (arr_height - 1));
+			cs_arr[GRID_MIDDLE][index++] = double_cs[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+			cs_arr[GRID_MIDDLE][index] = double_cs[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
 			break;
 		case 3:
 			rand_temp = rand() % 4;
-			cs_arr[index++] = triple_cs[rand_temp][0] * arr_length + (rand() % (arr_height - 1));
-			cs_arr[index++] = triple_cs[rand_temp][1] * arr_length + (rand() % (arr_height - 1));
-			cs_arr[index] = triple_cs[rand_temp][2] * arr_length + (rand() % (arr_height - 1));
+			cs_arr[GRID_MIDDLE][index++] = triple_cs[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+			cs_arr[GRID_MIDDLE][index++] = triple_cs[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+			cs_arr[GRID_MIDDLE][index] = triple_cs[rand_temp][2] * arr_length + (rand() % (arr_length - 1));
 			break;
 		default:
 			printf("Error: charging station num is out of range\n");
 			exit(0);
 	}
-
+	//set charging station position for MIDDLE GRID
 	for(int count = 0; count < CS_num; count++){
-		int cs_position = cs_arr[count];
+		int cs_position = cs_arr[GRID_MIDDLE][count];
 		if(cs_position / arr_length == UP){
-			arr[0][cs_position % (arr_length - 1)] = -8;	
+			arr[arr_length - 1][cs_position % (arr_length - 1) + arr_length - 1] = -8;	
 		}else if(cs_position / arr_length == DOWN){
-			arr[arr_height - 1][cs_position % (arr_length - 1) + 1] = -8;
+			arr[2 * (arr_length - 1)][cs_position % (arr_length - 1) + arr_length] = -8;
 		}else if(cs_position / arr_length == LEFT){
-			arr[cs_position % (arr_length - 1) + 1][0] = -8;
+			arr[cs_position % (arr_length - 1) + arr_length][arr_length - 1] = -8;
 		}else if(cs_position / arr_length == RIGHT){
-			arr[cs_position % (arr_length - 1)][arr_height - 1] = -8;
+			arr[cs_position % (arr_length - 1) + arr_length - 1][2 * (arr_length - 1)] = -8;
 		}else{
+			printf("Error: charging station position is out of range\n");
 			exit(0);
 		}
 	}
+	//set charging station position for UP GRID
+	for(int count = 0; count < CS_num; count++){
+		
+	}
+	//set charging station position for DOWN GRID
+
+	//set charging station position for LEFT GRID
+
+	//set charging station position for RIGHT GRID
+
+
+
 	
 }
 void set_current_speed(int *Current_Speed){
