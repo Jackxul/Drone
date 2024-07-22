@@ -19,7 +19,7 @@ bool status = true; //true: working, false: need to charge
  *
  * */
 
-float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	//zigzag
+float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base, int y_base){	//zigzag
 	float life = Battery_Capacity * 60.0; //to second
 	JPrintf("Battery Capacity: %f sec\n", life);
 	float trip = Pesticide;
@@ -27,13 +27,13 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
-	int temp = base;//base variable (use to control the initial number of j(1/square_length - 1))
+	int temp = x_base;//base variable (use to control the initial number of j(1/square_length - 1))
 	int dir_x = 1;//direction variable (use to control the direction of zigzag)
 	bool dir_y = true;//direction variable (use to check the direction of zigzag)
 	int nearest_cs_dx = 0;
 	int nearest_cs_dy = 0;
-	for(int i = 1; i < square_length; i++){
-		for(int j = temp; j < square_length && j > 0; j += dir_x){
+	for(int i = y_base; i < y_base + square_length - 2; i++){
+		for(int j = temp; j < x_base + square_length - 1 && j > x_base - 1; j += dir_x){
 			//debug code
 			//debug code
 			if(arr[i][j] >= 1 && life > 0 && trip > 0){
@@ -123,7 +123,6 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	
 #endif
 				life -= 0.5;
 				used_time += 0.5;
-
 #ifdef DEBUG_MODE
 				print_array(arr, square_length, square_length);
 #elif TEST_MODE
@@ -138,11 +137,11 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	
 				 *do pesticide refill and calculation
 				 */
 				exit(0);
-			}else if(dir_y & (j == square_length - 1)){
+			}else if(dir_y & (j == x_base + square_length - 2)){
 #ifdef DEBUG_MODE
 				JPrintf("temp change = %d\n", temp);
 #endif
-				temp = square_length - 2;
+				temp = x_base + square_length - 3;
 				dir_x = -1;
 				dir_y = false;
 				energy += 2.5;
@@ -162,8 +161,8 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int base){	
 				break;
 
 			}
-			if(!(dir_y) & (j == 1)){
-				temp = base;
+			if(!(dir_y) & (j == x_base)){
+				temp = x_base;
 				dir_x = 1;
 				dir_y = true;
 #ifdef DEBUG_MODE

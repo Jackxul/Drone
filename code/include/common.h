@@ -7,6 +7,7 @@
 #include<math.h>
 #include<time.h>
 #include<stdarg.h>
+#include<pthread.h>
 
 extern FILE *fp;
 
@@ -51,6 +52,7 @@ enum map_location{
 	LEFT = 3,
 	RIGHT = 4
 };
+
 
 // Declare the custom printf function
 void JPrintf(const char *format, ...);

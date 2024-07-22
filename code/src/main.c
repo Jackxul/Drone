@@ -2,6 +2,18 @@
 #include "zigzag.h"
 #include "zamboni.h"
 
+#define L_X_P 1 
+#define L_Y_P Grid_Height
+#define R_X_P (2 * Grid_Length - 1)
+#define	R_Y_P Grid_Height
+#define	U_X_P Grid_Length
+#define	U_Y_P 1
+#define	D_X_P Grid_Length
+#define	D_Y_P (2 * Grid_Height - 1)
+#define M_X_P Grid_Length
+#define M_Y_P Grid_Height
+
+
 void check(bool status ,int Current_Speed, int Current_Height){	
 	if(!status){
 		Current_Speed = 10;
@@ -22,8 +34,8 @@ int main(int argc,char *argv[]){
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	
-	int square_l = Grid_Length * 3 - 2;
 
+	int square_l = Grid_Length * 3 - 2;
 	//Create file name based on current time
 	char filename[100];
 #ifdef ZAMBONI_MODE
@@ -82,15 +94,20 @@ int main(int argc,char *argv[]){
 	
 #ifdef ZAMBONI_MODE
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
-	zamboni(Array, Grid_Length, Grid_Height);
+	//zamboni(Array, Grid_Length, Grid_Height);
 #else
-	zigzag(Array, cs_arr, CS_num, 30, 1);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, L_X_P, L_Y_P);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, R_X_P, R_Y_P);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, U_X_P, U_Y_P);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, D_X_P, D_Y_P);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
 #endif
 
+	printf("Finish\n");
 #ifdef DEBUG_MODE
-	print_array(Array, Grid_Length, Grid_Height);
+	print_array(Array, square_l, square_l);
 #elif TEST_MODE
-	print_array(Array, Grid_Length, Grid_Height);
+	print_array(Array, square_l, square_l);
 #endif
 
 //	for(int i = 0; i < CS_num; i++){
