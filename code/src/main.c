@@ -113,7 +113,6 @@ int main(int argc,char *argv[]){
 	zigzag(Array, cs_arr, CS_num, Grid_Length, D_X_P, D_Y_P);
 	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
 #endif
-
 	printf("Finish\n");
 #ifdef DEBUG_MODE
 	print_array(Array, square_l, square_l);

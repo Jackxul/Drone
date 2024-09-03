@@ -98,32 +98,101 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 			printf("Error: charging station num is out of range\n");
 			exit(0);
 	}
-	//set charging station position for MIDDLE GRID
+	//set charging station position for MIDDLE GRID 	DONE
 	for(int count = 0; count < CS_num; count++){
 		int cs_position = cs_arr[GRID_MIDDLE][count];
 		if(cs_position / arr_length == UP){
-			arr[arr_length - 1][cs_position % (arr_length - 1) + arr_length - 1] = -8;	
+			arr[arr_length - 1][cs_position % (arr_length - 1) + arr_length] = -8;
+			cs_arr[GRID_UP][0] = cs_position;
+			printf("\n temp UP \n");
 		}else if(cs_position / arr_length == DOWN){
-			arr[2 * (arr_length - 1)][cs_position % (arr_length - 1) + arr_length] = -8;
+			arr[2 * (arr_length - 1)][cs_position % (arr_length - 1) + arr_length - 1] = -8;
+			cs_arr[GRID_DOWN][0] = cs_position;
+			printf("\n temp DOWN \n");
 		}else if(cs_position / arr_length == LEFT){
-			arr[cs_position % (arr_length - 1) + arr_length][arr_length - 1] = -8;
+			arr[cs_position % (arr_length - 1) + arr_length - 1][arr_length - 1] = -8;
+			cs_arr[GRID_LEFT][0] = cs_position;
+			printf("\n temp LEFT \n");
 		}else if(cs_position / arr_length == RIGHT){
-			arr[cs_position % (arr_length - 1) + arr_length - 1][2 * (arr_length - 1)] = -8;
+			arr[cs_position % (arr_length - 1) + arr_length][2 * (arr_length - 1)] = -8;
+			cs_arr[GRID_RIGHT][0] = cs_position;
+			printf("\n temp RIGHT \n");
 		}else{
 			printf("Error: charging station position is out of range\n");
 			exit(0);
 		}
 	}
 	//set charging station position for UP GRID
-	for(int count = 0; count < CS_num; count++){
-		
+	//set the current side as number 0
+	if(cs_arr[GRID_UP][0] != -1){
+		//down occupied
+		int temp_double_dice[3] = {UP,LEFT,RIGHT};	//1,3,4
+		int temp_triple_dice[3][2] = {
+			{UP,LEFT},	//1,3
+			{UP,RIGHT},	//1,4
+			{LEFT,RIGHT}	//3,4
+		};
+		if(CS_num == 2){	//set one more charging station
+			rand_temp = rand() % 3;	//0,1,2
+			cs_arr[GRID_UP][1] = temp_double_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+			if(temp_double_dice[rand_temp] / 3 != 0){ //LEFT or RIGHT
+				arr[cs_arr[GRID_UP][1] % arr_length + (temp_double_dice[rand_temp] / 4)][(arr_length - 1) * (temp_double_dice[rand_temp] / 2)] = -8;	//左邊從高度0開始 右邊從高度1開始	
+			}else{ //UP
+				arr[0][cs_arr[GRID_UP][1] + 1] = -8;	//上面從寬度1開始
+			}
+		}else if(CS_num == 3){	//set two more charging station
+			rand_temp = rand() % 3;	//0,1,2
+			cs_arr[GRID_UP][1] = temp_triple_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+			cs_arr[GRID_UP][2] = temp_triple_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+			if(temp_triple_dice[rand_temp][0] / 3 && temp_triple_dice[rand_temp][1] / 3 != 0){ //LEFT AND RIGHT
+				arr[cs_arr[GRID_UP][1] % arr_length + (temp_triple_dice[rand_temp][0] / 4)][(arr_length - 1) * (temp_triple_dice[rand_temp][0] / 2)] = -8;	//左邊從高度0開始 右邊從高度1開始	
+				arr[cs_arr[GRID_UP][2] % arr_length + (temp_triple_dice[rand_temp][1] / 4)][(arr_length - 1) * (temp_triple_dice[rand_temp][1] / 2)] = -8;	//左邊從高度0開始 右邊從高度1開始
+			}else{	//有上的充電站 (上跟左右的共通式)
+				arr[(temp_triple_dice[rand_temp][0] / 3) * (cs_arr[GRID_UP][1] % arr_length) + (temp_triple_dice[rand_temp][0] / 4)][arr_length - 1 + (1 - (temp_triple_dice[rand_temp][0] / 3)) * (cs_arr[GRID_UP][1] % arr_length + 1) + ((temp_triple_dice[rand_temp][0] & 4) / 4 * (arr_length - 1))] = -8;
+				arr[(temp_triple_dice[rand_temp][1] / 3) * (cs_arr[GRID_UP][2] % arr_length) + (temp_triple_dice[rand_temp][1] / 4)][arr_length - 1 + (1 - (temp_triple_dice[rand_temp][1] / 3)) * (cs_arr[GRID_UP][2] % arr_length + 1) + ((temp_triple_dice[rand_temp][1] & 4) / 4 * (arr_length - 1))] = -8;
+			}
+
+		//	arr[temp_triple_dice[rand_temp]][] = -8;
+		//	arr[][] = -8;
+		}
+	}else{
+		//no charging station in UP GRID	
 	}
 	//set charging station position for DOWN GRID
+	if(cs_arr[GRID_DOWN][0] != -1){
+		//up occupied
+		int temp_double_dice[3] = {DOWN,LEFT,RIGHT};	//2,3,4
+		int temp_triple_dice[3][2] = {
+			{DOWN,LEFT},	//2,3
+			{DOWN,RIGHT},	//2,4
+			{LEFT,RIGHT}	//3,4
+		};
+		if(CS_num == 2){	//set one more charging station
+			rand_temp = rand() % 3;	//0,1,2
+			cs_arr[GRID_DOWN][1] = temp_double_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+			if(temp_double_dice[rand_temp] / 3 != 0){ //LEFT or RIGHT
+				arr[cs_arr[GRID_DOWN][1] % arr_length + (2 * (arr_length - 1)) + (temp_double_dice[rand_temp] / 4)][(arr_length - 1) * (temp_double_dice[rand_temp] / 2)] = -8;	//左邊從高度0開始 右邊從高度1開始	
+			}else{ //DOWN
+				arr[2 * (arr_length - 1)][cs_arr[GRID_DOWN][1] + 1] = -8;	//下面從寬度1開始
+			}
+		}else if(CS_num == 3){
 
+		}
+	}else{
+		//no charging station in DOWN GRID
+	}
 	//set charging station position for LEFT GRID
-
+	if(cs_arr[GRID_LEFT][0] != -1){
+		
+	}else{
+		//no charging station in LEFT GRID
+	}
 	//set charging station position for RIGHT GRID
-
+	if(cs_arr[GRID_RIGHT][0] != -1){
+		
+	}else{
+		//no charging station in RIGHT GRID
+	}
 
 
 	
