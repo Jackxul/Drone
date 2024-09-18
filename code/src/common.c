@@ -113,13 +113,14 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 			arr[cs_position % (arr_length - 1) + arr_length - 1][arr_length - 1] = -8;
 			cs_arr[GRID_LEFT][0] = cs_position;
 			printf("\n temp LEFT \n");
+			printf("coount now is = %d\n", count);
 		}else if(cs_position / arr_length == RIGHT){
 			arr[cs_position % (arr_length - 1) + arr_length][2 * (arr_length - 1)] = -8;
 			cs_arr[GRID_RIGHT][0] = cs_position;
 			printf("\n temp RIGHT \n");
 		}else{
 			printf("Error: charging station position is out of range\n");
-			exit(0);
+			//exit(0);
 		}
 	}
 	//set charging station position for UP GRID
@@ -138,7 +139,7 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 			if(temp_double_dice[rand_temp] / 3 != 0){ //LEFT or RIGHT
 				arr[cs_arr[GRID_UP][1] % arr_length + (temp_double_dice[rand_temp] / 4)][(arr_length - 1) * (temp_double_dice[rand_temp] / 2)] = -8;	//左邊從高度0開始 右邊從高度1開始	
 			}else{ //UP
-				arr[0][(cs_arr[GRID_UP][1] % arr_length) + arr_length + 1] = -8;	//上面從寬度1開始
+				arr[0][(cs_arr[GRID_UP][1] % arr_length) + arr_length] = -8;	//上面從寬度1開始
 			}
 		}else if(CS_num == 3){	//set two more charging station
 			rand_temp = rand() % 3;	//0,1,2
@@ -155,11 +156,46 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 		//	arr[temp_triple_dice[rand_temp]][] = -8;
 		//	arr[][] = -8;
 		}
-	}else{
-		//no charging station in UP GRID	
+		printf("debug1\n");
+	}else{	
+
+		printf("debug2\n");
+		//rand from up, left, right 1,3,4
+		int temp_single_dice[3] = {UP,LEFT,RIGHT};
+		//rand from up-left, up-right, left-right 1 + 3, 1 + 4, 3 + 4
+		int temp_double_dice[3][2] = {
+			{UP,LEFT},
+			{UP,RIGHT},
+			{LEFT,RIGHT}
+		};
+		rand_temp = rand() % 3;
+		switch(CS_num){
+			case 1:
+				cs_arr[GRID_UP][0] = temp_single_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_single_dice[rand_temp] / 3) * (cs_arr[GRID_UP][0] % arr_length) + (temp_single_dice[rand_temp] / 4)][arr_length - 1 + (1 - (temp_single_dice[rand_temp] / 3)) * (cs_arr[GRID_UP][0] % arr_length + 1) + ((temp_single_dice[rand_temp] & 4) / 4 * (arr_length - 1))] = -8; //上跟左右的共通式
+				break;
+			case 2:
+				cs_arr[GRID_UP][0] = temp_double_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_UP][1] = temp_double_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_double_dice[rand_temp][0] / 3) * (cs_arr[GRID_UP][0] % arr_length) + (temp_double_dice[rand_temp][0] / 4)][arr_length - 1 + (1 - (temp_double_dice[rand_temp][0] / 3)) * (cs_arr[GRID_UP][0] % arr_length + 1) + ((temp_double_dice[rand_temp][0] & 4) / 4 * (arr_length - 1))] = -8; //上跟左右的共通式
+				arr[(temp_double_dice[rand_temp][1] / 3) * (cs_arr[GRID_UP][1] % arr_length) + (temp_double_dice[rand_temp][1] / 4)][arr_length - 1 + (1 - (temp_double_dice[rand_temp][1] / 3)) * (cs_arr[GRID_UP][1] % arr_length + 1) + ((temp_double_dice[rand_temp][1] & 4) / 4 * (arr_length - 1))] = -8; //上跟左右的共通式
+				break;
+			case 3:
+				//rand from up-left-right 1 + 3 + 4
+				cs_arr[GRID_UP][0] = UP * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_UP][1] = LEFT * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_UP][2] = RIGHT * arr_length + (rand() % (arr_length - 1));
+				arr[0][cs_arr[GRID_UP][0] % arr_length + arr_length] = -8;	//上面從寬度1開始
+				arr[cs_arr[GRID_UP][1] % arr_length][arr_length - 1] = -8;	//左邊從高度0開始
+				arr[cs_arr[GRID_UP][2] % arr_length + 1][2 * (arr_length - 1)] = -8;	//右邊從高度1開始
+				break;
+			default:
+				break;
+		}
 	}
 	//set charging station position for DOWN GRID
 	if(cs_arr[GRID_DOWN][0] != -1){
+		printf("debug 3\n");
 		//up occupied
 		int temp_double_dice[3] = {DOWN,LEFT,RIGHT};	//2,3,4
 		int temp_triple_dice[3][2] = {
@@ -188,8 +224,41 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 			}
 		}
 	}else{
-		//no charging station in DOWN GRID
+		//rand from down, left, right 2,3,4
+		int temp_single_dice[3] = {DOWN,LEFT,RIGHT};
+		//rand from down-left, down-right, left-right 2 + 3, 2 + 4, 3 + 4
+		int temp_double_dice[3][2] = {
+			{DOWN,LEFT},
+			{DOWN,RIGHT},
+			{LEFT,RIGHT}
+		};
+		rand_temp = rand() % 3;
+		switch(CS_num){
+			case 1:
+				cs_arr[GRID_DOWN][0] = temp_single_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+				arr[(3 - (temp_single_dice[rand_temp] / 3)) * (arr_length - 1) + (temp_single_dice[rand_temp] / 3) * (cs_arr[GRID_DOWN][0] % arr_length) + (temp_single_dice[rand_temp] / 4)][(temp_single_dice[rand_temp] / 2) * (arr_length - 1) + ((1 - (temp_single_dice[rand_temp] / 3)) * (cs_arr[GRID_DOWN][0] % arr_length))] = -8; //下跟左右的共通式
+				break;
+			case 2:
+				cs_arr[GRID_DOWN][0] = temp_double_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_DOWN][1] = temp_double_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+				arr[((3 - (temp_double_dice[rand_temp][0] / 3)) * (arr_length - 1)) + (temp_double_dice[rand_temp][0] / 3) * (cs_arr[GRID_DOWN][0] % arr_length) + (temp_double_dice[rand_temp][0] / 4)][(temp_double_dice[rand_temp][0] / 2) * (arr_length - 1) + ((1 - (temp_double_dice[rand_temp][0] / 3)) * (cs_arr[GRID_DOWN][0] % arr_length))] = -8; //下跟左右的共通式
+				arr[((3 - (temp_double_dice[rand_temp][1] / 3)) * (arr_length - 1)) + (temp_double_dice[rand_temp][1] / 3) * (cs_arr[GRID_DOWN][1] % arr_length) + (temp_double_dice[rand_temp][1] / 4)][(temp_double_dice[rand_temp][1] / 2) * (arr_length - 1) + ((1 - (temp_double_dice[rand_temp][1] / 3)) * (cs_arr[GRID_DOWN][1] % arr_length))] = -8; //下跟左右的共通式
+				break;
+			case 3:
+				//rand from down-left-right 2 + 3 + 4
+				cs_arr[GRID_DOWN][0] = DOWN * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_DOWN][1] = LEFT * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_DOWN][2] = RIGHT * arr_length + (rand() % (arr_length - 1));
+				arr[3 * (arr_length - 1)][cs_arr[GRID_DOWN][0] % arr_length + arr_length] = -8;	//下面從寬度0開始
+				arr[cs_arr[GRID_DOWN][1] % arr_length][arr_length - 1] = -8;	//左邊從高度0開始
+				arr[cs_arr[GRID_DOWN][2] % arr_length + 1][2 * (arr_length - 1)] = -8;	//右邊從高度1開始
+				break;
+			default:
+				break;
+		}
+		printf("SET DOWN GRID\n");
 	}
+	printf("debug 4\n");
 	//set charging station position for LEFT GRID
 	if(cs_arr[GRID_LEFT][0] != -1){
 		//right occupied
@@ -220,16 +289,123 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 			}
 		}
 	}else{
-		//no charging station in LEFT GRID
+		//rand from up, down, left 1,2,3
+		int temp_single_dice[3] = {UP,DOWN,LEFT};
+		//rand from up-down, up-left, down-left 1 + 2, 1 + 3, 2 + 3	
+		int temp_double_dice[3][2] = {
+			{UP,DOWN},
+			{UP,LEFT},
+			{DOWN,LEFT}
+		};
+		rand_temp = rand() % 3;
+		switch(CS_num){
+			case 1:
+				cs_arr[GRID_LEFT][0] = temp_single_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_single_dice[rand_temp] / 3) * (cs_arr[GRID_LEFT][0] % arr_length) + ((arr_length - 1) * ((2 - temp_single_dice[rand_temp] % 2)))][((1 - (temp_single_dice[rand_temp] / 3)) * (cs_arr[GRID_LEFT][0] % arr_length)) + (1 - (temp_single_dice[rand_temp] / 2))] = -8;
+				break;
+			case 2:
+				cs_arr[GRID_LEFT][0] = temp_double_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_LEFT][1] = temp_double_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_double_dice[rand_temp][0] / 3) * (cs_arr[GRID_LEFT][0] % arr_length) + ((arr_length - 1) * ((2 - temp_double_dice[rand_temp][0] % 2)))][((1 - (temp_double_dice[rand_temp][0] / 3)) * (cs_arr[GRID_LEFT][0] % arr_length)) + (1 - (temp_double_dice[rand_temp][0] / 2))] = -8;
+				arr[(temp_double_dice[rand_temp][1] / 3) * (cs_arr[GRID_LEFT][1] % arr_length) + ((arr_length - 1) * ((2 - temp_double_dice[rand_temp][1] % 2)))][((1 - (temp_double_dice[rand_temp][1] / 3)) * (cs_arr[GRID_LEFT][1] % arr_length)) + (1 - (temp_double_dice[rand_temp][1] / 2))] = -8;
+
+				break;
+			case 3:
+				//rand from up-down-left 1 + 2 + 3
+				cs_arr[GRID_LEFT][0] = UP * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_LEFT][1] = DOWN * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_LEFT][2] = LEFT * arr_length + (rand() % (arr_length - 1));
+				arr[cs_arr[GRID_LEFT][0] % arr_length + arr_length][(arr_length - 1)] = -8;	//上面從寬度1開始
+				arr[cs_arr[GRID_LEFT][1] % arr_length + 2 * (arr_length - 1)][(arr_length - 1)] = -8;	//下面從寬度0開始
+				arr[cs_arr[GRID_LEFT][2] % arr_length + arr_length - 1][0] = -8;	//左邊從高度29開始
+				break;
+			default:
+				break;
+		}
+		printf("SET LEFT GRID\n");
 	}
+	printf("debug 5\n");
 	//set charging station position for RIGHT GRID
+	printf("debug = %d\n", cs_arr[GRID_UP][0]);
+	printf("debug = %d\n", cs_arr[GRID_DOWN][0]);
+	printf("debug = %d\n", cs_arr[GRID_LEFT][0]);
+	printf("debug = %d\n", cs_arr[GRID_RIGHT][0]);
+
 	if(cs_arr[GRID_RIGHT][0] != -1){
-		
+	printf("debug 6\n");
+		//left occupied
+		int temp_double_dice[3] = {UP,DOWN,RIGHT};	//1,2,4
+		int temp_triple_dice[3][2] = {
+			{UP,DOWN},	//1,2
+			{UP,RIGHT},	//1,4
+			{DOWN,RIGHT}	//2,4
+		};
+		if(CS_num == 2){	//set one more charging station
+			rand_temp = rand() % 3;	//0,1,2
+			cs_arr[GRID_RIGHT][1] = temp_double_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+			if(temp_double_dice[rand_temp] / 3 == 0){ //UP or DOWN
+				arr[(arr_length - 1) * temp_double_dice[rand_temp]][2 * (arr_length - 1) + cs_arr[GRID_RIGHT][1] % arr_length + 1 - (temp_double_dice[rand_temp] / 2)] = -8;	//上面從寬度1開始 下面從寬度0開始	
+			}else{ //RIGHT
+				arr[cs_arr[GRID_RIGHT][1] % arr_length + (arr_length - 1) + (temp_double_dice[rand_temp] / 4)][3 * (arr_length - 1)] = -8;	//右邊從高度1開始
+			}
+		}else if(CS_num == 3){	//set two more charging station
+			printf("debug 7\n");
+			rand_temp = rand() % 3;	//0,1,2
+			cs_arr[GRID_RIGHT][1] = temp_triple_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+			cs_arr[GRID_RIGHT][2] = temp_triple_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+			if(temp_triple_dice[rand_temp][0] / 3 && temp_triple_dice[rand_temp][1] / 3 == 0){ //UP AND DOWN
+	printf("debug 8\n");
+				arr[temp_triple_dice[rand_temp][0] * (arr_length - 1)][2 * (arr_length - 1) + (cs_arr[GRID_RIGHT][1] % arr_length) + 1 - (temp_triple_dice[rand_temp][0] / 2)] = -8;	//上面從寬度1開始 下面從寬度0開始
+				arr[temp_triple_dice[rand_temp][1] * (arr_length - 1)][2 * (arr_length - 1) + (cs_arr[GRID_RIGHT][2] % arr_length) + 1 - (temp_triple_dice[rand_temp][1] / 2)] = -8;	//上面從寬度1開始 下面從寬度0開始
+			}else{	//有右的充電站 (右跟上下的共通式)
+	printf("debug 9\n");
+				arr[(temp_triple_dice[rand_temp][0] / 4) * (cs_arr[GRID_RIGHT][1] % arr_length) + ((temp_triple_dice[rand_temp][0] % 3) * (arr_length - 1)) + (temp_triple_dice[rand_temp][0] / 4)][((1 - (temp_triple_dice[rand_temp][0] / 4)) * cs_arr[GRID_RIGHT][1] % arr_length) + (temp_triple_dice[rand_temp][0] % 2) + ((arr_length - 1) * (2 + (temp_triple_dice[rand_temp][0] / 4)))]= -8; //右邊從高度1開始 上面從寬度1開始 下面從寬度0開始
+				arr[(temp_triple_dice[rand_temp][1] / 4) * (cs_arr[GRID_RIGHT][2] % arr_length) + ((temp_triple_dice[rand_temp][1] % 3) * (arr_length - 1)) + (temp_triple_dice[rand_temp][1] / 4)][((1 - (temp_triple_dice[rand_temp][1] / 4)) * cs_arr[GRID_RIGHT][2] % arr_length) + (temp_triple_dice[rand_temp][1] % 2) + ((arr_length - 1) * (2 + (temp_triple_dice[rand_temp][1] / 4)))]= -8; //右邊從高度1開始 上面從寬度1開始 下面從寬度0開始
+			}
+		}
 	}else{
-		//no charging station in RIGHT GRID
+		printf("debug 10\n");
+		//rand from up, down, right 1,2,4
+		int temp_single_dice[3] = {UP,DOWN,RIGHT};
+		//rand from up-down, up-right, down-right 1 + 2, 1 + 4, 2 + 4
+		int temp_double_dice[3][2] = {
+			{UP,DOWN},
+			{UP,RIGHT},
+			{DOWN,RIGHT}
+		};
+		rand_temp = rand() % 3;
+		switch(CS_num){
+			case 1:
+				cs_arr[GRID_RIGHT][0] = temp_single_dice[rand_temp] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_single_dice[rand_temp] / 3) * (cs_arr[GRID_RIGHT][0] % arr_length) + ((temp_single_dice[rand_temp] % 3) * (arr_length - 1)) + (temp_single_dice[rand_temp] / 4)][((1 - (temp_single_dice[rand_temp] / 3)) * cs_arr[GRID_RIGHT][0] % arr_length) + (temp_single_dice[rand_temp] % 2) + ((arr_length - 1) * (2 + (temp_single_dice[rand_temp] / 4)))] = -8; //右跟上下的共通式
+				break;
+			case 2:
+				cs_arr[GRID_RIGHT][0] = temp_double_dice[rand_temp][0] * arr_length + (rand() % (arr_length - 1));
+				cs_arr[GRID_RIGHT][1] = temp_double_dice[rand_temp][1] * arr_length + (rand() % (arr_length - 1));
+				arr[(temp_double_dice[rand_temp][0] / 3) * (cs_arr[GRID_RIGHT][0] % arr_length) + ((temp_double_dice[rand_temp][0] % 3) * (arr_length - 1)) + (temp_double_dice[rand_temp][0] / 4)][((1 - (temp_double_dice[rand_temp][0] / 3)) * cs_arr[GRID_RIGHT][0] % arr_length) + (temp_double_dice[rand_temp][0] % 2) + ((arr_length - 1) * (2 + (temp_double_dice[rand_temp][0] / 4)))] = -8; //右跟上下的共通式
+				arr[(temp_double_dice[rand_temp][1] / 3) * (cs_arr[GRID_RIGHT][1] % arr_length) + ((temp_double_dice[rand_temp][1] % 3) * (arr_length - 1)) + (temp_double_dice[rand_temp][1] / 4)][((1 - (temp_double_dice[rand_temp][1] / 3)) * cs_arr[GRID_RIGHT][1] % arr_length) + (temp_double_dice[rand_temp][1] % 2) + ((arr_length - 1) * (2 + (temp_double_dice[rand_temp][1] / 4)))] = -8; //右跟上下的共通式
+				break;
+			case 3:
+				printf("debug 11\n");
+				//rand from up-down-right 1 + 2 + 4
+				cs_arr[GRID_RIGHT][0] = UP * arr_length + (rand() % (arr_length - 1));
+		printf("debug 12\n");
+				cs_arr[GRID_RIGHT][1] = DOWN * arr_length + (rand() % (arr_length - 1));
+		printf("debug 13\n");
+				cs_arr[GRID_RIGHT][2] = RIGHT * arr_length + (rand() % (arr_length - 1));
+		printf("debug 14\n");
+				arr[UP * (arr_length - 1)][cs_arr[GRID_RIGHT][0] % arr_length + 1 - (UP / 2)] = -8;	//上面從寬度1開始
+		printf("debug 15\n");
+				arr[DOWN * (arr_length - 1)][cs_arr[GRID_RIGHT][1] % arr_length + 1 - (DOWN / 2)] = -8;	//下面從寬度0開始
+		printf("debug 16\n");
+				arr[arr_length - 1 + (cs_arr[GRID_RIGHT][2] % arr_length) + 1][3 * (arr_length - 1)] = -8;
+		printf("debug 17\n");
+				break;
+			default:
+				break;
+		}
+		printf("SET RIGHT GRID\n");
 	}
-
-
 	
 }
 void set_current_speed(int *Current_Speed){

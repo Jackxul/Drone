@@ -39,7 +39,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 			if(arr[i][j] >= 1 && life > 0 && trip > 0){
 				trip -= arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 				used_pesticide += arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
-				JPrintf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
+				//JPrintf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
 				arr[i][j] = 0;
 //				JPrintf("S_trip = %f\n", trip);
 #ifdef DEBUG_MODE
