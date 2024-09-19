@@ -6,17 +6,19 @@ S_DIR:= src
 I_DIR:= include
 O_DIR_ZA:= output/zamboni
 O_DIR_ZZ:= output/zigzag
+O_DIR_SP:= output/spiral
+O_DIR_RS:= output/respiral
 SRC:=$(wildcard $(S_DIR)/*.c)
 OBJ:=$(patsubst $(S_DIR)/%.c,$(B_DIR)/%.o,$(SRC))
 
 
-BV = 0.7261 
-CV = 0.87389
+BVM = 0.9758142
+BVN = 0.3717309
 db ?= 0
 test ?= 0
 grid ?= 0
 za ?= 0
-CFLAGS += -D BV=$(BV) -D CV=$(CV)
+CFLAGS += -D BVM=$(BVM) -D BVN=$(BVN)
 
 
 ifeq ($(db), 1)
@@ -60,9 +62,9 @@ endif
 
 	@tree .
 $(B_DIR)/%.o: $(S_DIR)/%.c
-	$(CC) $(CFLAGS) -I $(I_DIR) -c $< -o $@
+	$(CC) $(CFLAGS) -I $(I_DIR) -c $< -o $@ 
 	@echo  "Building objective file $@ from $< ..."
-	@mkdir -p $(O_DIR_ZA) $(O_DIR_ZZ)	
+	@mkdir -p $(O_DIR_ZA) $(O_DIR_ZZ) $(O_DIR_SP) $(O_DIR_RS)
 .PHONY: clean
 clean:
 	@echo "Makefile_sub : Cleaning up..."
@@ -72,6 +74,6 @@ clean:
 .PHONY: clean_result
 clean_result:
 	@echo "Makefile_sub : Cleaning up everything include result..."
-	rm -rf $(O_DIR_ZA)/* $(O_DIR_ZZ)/* $(B_DIR)/*.o $(E_DIR)/*
+	rm -rf $(O_DIR_ZA)/* $(O_DIR_ZZ)/* $(O_DIR_SP)/* $(O_DIR_RS)/* $(B_DIR)/*.o $(E_DIR)/*
 	@echo "Makefile: Clean."
 	@tree .

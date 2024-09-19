@@ -1,5 +1,5 @@
 #include <zamboni.h>
-
+#include <zigzag.h>
 
 static float life = Battery_Capacity * 60.0; //to second
 static float trip = Pesticide;
@@ -48,33 +48,48 @@ void visit(int **arr, int point_x, int point_y){
 }
 
 
-float zamboni(int **arr, int arr_length, int arr_height) {
-	printf("Battery Capacity: %f sec\n", life);
-	int start_row = 1;
-	int end_row = arr_height / 2;
-#ifdef DEBUG_MODE
-	printf("start_row: %d\n", start_row);
-	printf("end_row: %d\n", end_row);
-#endif
-#ifdef GRID_SIZE
-	printf("start_row: %d\n", start_row);
-	printf("end_row: %d\n", end_row);
-#endif
-	
-		
-	for(int i = 1; i < arr_length - 1; i++){
-		for(int j = 1; j < arr_height - 1; j++){
+float zamboni(int **arr, int **cs_arr, int CS_num, int square_length, int x_base, int y_base){	//zamboni
 
-			
-
-			visit(arr , i, j);
-		}
-
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+	char filename[100];
+	snprintf(filename, sizeof(filename), "output/zamboni/result_%04d%02d%02d_%02d%02d%2d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	fp = fopen(filename, "w");
+	if(fp == NULL){
+		printf("Error: cannot open file\n");
+		return 1;
 	}
 
-	printf("Battery_life: %.4f\n", life);
-	printf("Pesticide_amount: %.4f\n", trip);
-	return 0;
+	zigzag(arr, cs_arr, CS_num, square_length, x_base, y_base, false);
+
+//	printf("Battery Capacity: %f sec\n", life);
+//	int start_row = 1;
+//	int end_row = arr_height / 2;
+//#ifdef DEBUG_MODE
+//	printf("start_row: %d\n", start_row);
+//	printf("end_row: %d\n", end_row);
+//#endif
+//#ifdef GRID_SIZE
+//	printf("start_row: %d\n", start_row);
+//	printf("end_row: %d\n", end_row);
+//#endif
+//	
+//		
+//	for(int i = 1; i < arr_length - 1; i++){
+//		for(int j = 1; j < arr_height - 1; j++){
+//
+//			
+//
+//			visit(arr , i, j);
+//		}
+//
+//	}
+//
+//	printf("Battery_life: %.4f\n", life);
+//	printf("Pesticide_amount: %.4f\n", trip);
+//	return 0;
+
+	fclose(fp);
 }
 
 void zamboni_path(int **arr, int arr_length, int arr_height) {

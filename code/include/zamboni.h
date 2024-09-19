@@ -10,7 +10,7 @@ void visit(int **arr, int point_x, int point_y);
 void zamboni_path(int **arr, int arr_length, int arr_height);
 
 
-float zamboni(int **arr, int arr_length, int arr_height);	//zamboni
+float zamboni(int **arr, int **cs_arr, int CS_num, int square_length, int x_base, int y_base);	//zamboni
 
 
 

@@ -7,6 +7,11 @@ int Charge_time = 0;
 int Current_Height = 0;
 int Current_Speed = 2;
 bool status = true; //true: working, false: need to charge
+static float zam_life = Battery_Capacity * 60.0; //to second
+static float zam_used_time = 0; //used_time
+static float zam_used_pesticide = 0; //used_pesticide
+static float zam_energy = 0; //used_energy
+static int zam_charge_time = 0; //charge_time counter
 
 
 /*
@@ -19,9 +24,28 @@ bool status = true; //true: working, false: need to charge
  *
  * */
 
-float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base, int y_base){	//zigzag
+float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base, int y_base, bool check){	//zigzag
+											
+	if(check){
+
+		//get current time
+		time_t t = time(NULL);
+		struct tm tm = *localtime(&t);
+		char filename[100];	
+		snprintf(filename, sizeof(filename), "output/zigzag/result_%04d%02d%02d_%02d%02d%2d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+		fp = fopen(filename, "w");
+		if(fp == NULL){
+			printf("Error: cannot open file\n");
+			return 1;
+		}
+	}
 	float life = Battery_Capacity * 60.0; //to second
-	JPrintf("Battery Capacity: %f sec\n", life);
+	if(check){
+		zam_life = life;
+		JPrintf("Battery Capacity: %f sec\n", life);
+	}else{
+		JPrintf("Battery Capacity: %f sec\n", zam_life);
+	}
 	float trip = Pesticide;
 	float energy = 0;
 	float used_time = 0; //used_time
@@ -176,16 +200,42 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 			//int static count = 0;
 		}
 	}
-//#ifdef BV
-//	set_multi(&used_time);
-//#endif
-//	JPrintf("Battery_life: %.4f\n", life);
-//	JPrintf("Pesticide_amount: %.4f\n", trip);
-	JPrintf(" ====================================================\n");
-	JPrintf("|   Used time: %18.4f                    |\n", used_time);
-	JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
-	JPrintf("|   Charging time count: %2d                          |\n", charge_time);
-	JPrintf("|   Energy: %28.4f             |\n", energy * Power_Watt);
-	JPrintf(" ====================================================\n");
+	if(check){
+		zam_used_time = used_time;
+		zam_used_pesticide = used_pesticide;
+		zam_energy = energy;
+		zam_charge_time = charge_time;
+
+	//	JPrintf("Battery_life: %.4f\n", life);
+	//	JPrintf("Pesticide_amount: %.4f\n", trip);
+		JPrintf(" ====================================================\n");
+		JPrintf("|   Zigzag Algorithm                               |\n");
+		JPrintf("|   Used time: %18.4f                    |\n", used_time);
+		JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
+		JPrintf("|   Charging time count: %2d                          |\n", charge_time);
+		JPrintf("|   Energy: %25.4f             |\n", energy * Power_Watt);
+		JPrintf(" ====================================================\n");
+		fclose(fp);
+	}else{
+		set_multi(&zam_used_time);
+		set_multi(&zam_used_pesticide);
+		set_multi(&zam_energy);
+		set_multi(&zam_charge_time);
+		printf("set_multi\n");
+
+		JPrintf(" ====================================================\n");
+		JPrintf("|   Zigzag Algorithm                               |\n");
+		JPrintf("|   Used time: %18.4f                    |\n", zam_used_time);
+		JPrintf("|   Used pesticide: %12.4f                     |\n", zam_used_pesticide);
+		JPrintf("|   Charging time count: %2d                          |\n", zam_charge_time);
+		JPrintf("|   Energy: %25.4f             |\n", zam_energy * Power_Watt);
+		JPrintf(" ====================================================\n");
+		fclose(fp);	
+	}
+
 	return 0;
 }
+
+
+
+

@@ -2,6 +2,8 @@
 
 
 FILE *fp;
+FILE *sp_fp;
+
 // Declare the custom printf function
 void JPrintf(const char *format, ...) {
     va_list args;
@@ -17,6 +19,11 @@ void JPrintf(const char *format, ...) {
         vfprintf(fp, format, args);
         va_end(args);
     }
+    //if(sp_fp){
+    //    va_start(args, format);
+    //    vfprintf(sp_fp, format, args);
+    //    va_end(args);
+    //}
 }
 int single_cs[4] = {
 	UP,
@@ -43,12 +50,22 @@ unsigned int combine_primes_with_time(unsigned int prime1, unsigned int prime2) 
 	//get current time
 	unsigned int current_time = (unsigned int)time(NULL);
 	//combine two prime numbers with current time
-    return (prime1 * prime2) ^ current_time; // XOR
+    return ((prime1 * prime2) ^ current_time) * UNIQUE_GRID_NUMBER; // XOR
 }
 void set_random_seed() {
 	unsigned int seed = combine_primes_with_time(PRIME1, PRIME2);
 	//set random seed
 	srand(seed);
+}
+double skewed_random(double min, double max, double skew_num){
+
+	double rand_r = (double)rand() / RAND_MAX; // 0 ~ 1
+	// Apply logarithmic scaling to the grid value for wider range control
+    // This makes the skew effect grow smoothly with larger grid values
+    double skew_factor = log1p(skew_num) / 9.0;  // Use log1p for stability at small grid values					
+
+	rand_r = pow(rand_r, skew_factor); // Skew the random number
+	return min + rand_r * (max - min);
 }
 int rand_time(int min, int max)
 {
@@ -452,6 +469,41 @@ void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int
 		}
 	}
 }
-void set_multi(float *time){
-	*time *= Battery_Multi;
+void set_multi(double *time){
+	printf("time = %f\n", *time);
+	printf("UNIQUE_GRID_NUMBER = %d\n", UNIQUE_GRID_NUMBER);
+	printf("skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER) = %f\n", skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER));
+	*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER);
+
+	//*time *= Battery_Multi;
 }
+
+void fill_grid(int **arr, int square_l, int arr_length, int arr_height, bool boader_set) {
+    for (int i = 0; i < square_l; i++) {
+        for (int j = 0; j < square_l; j++) {
+            // 邊界檢查
+        	if (i == 0 || i == arr_length - 1 || i == 2 * arr_length - 2 ||
+                i == 3 * arr_length - 3 || j == 0 || j == arr_height - 1 ||
+                j == 2 * arr_height - 2 || j == 3 * arr_height - 3) {
+			((boader_set == 'true') ? (arr[i][j] = -1) : (arr[i][j] = ((arr[i][j] == -1) ? -1 : -8)));
+			arr[i][j] = -1;
+            // 雙噴區域檢查
+            	} else if ((i > 0 && i <= 2) || (i < arr_length - 1 && i >= arr_length - 3) ||
+                       (i >= arr_length && i < arr_length + 2) || 
+                       (i >= 2 * arr_length - 4 && i < 2 * arr_length - 2) ||
+                       (i >= 2 * arr_length - 1 && i < 2 * arr_length + 1) ||
+                       (i >= 3 * arr_length - 5 && i < 3 * arr_length - 3) ||
+                       (j > 0 && j <= 2) || (j < arr_height - 1 && j >= arr_height - 3) ||
+                       (j >= arr_height && j < arr_height + 2) ||
+                       (j >= 2 * arr_height - 4 && j < 2 * arr_height - 2) ||
+                       (j >= 2 * arr_height - 1 && j < 2 * arr_height + 1) ||
+                       (j >= 3 * arr_height - 5 && j < 3 * arr_height - 3)) {
+                	arr[i][j] = 2;
+            // 單噴區域
+            	} else {
+                	arr[i][j] = 1;
+            	}
+        	}
+	}
+}
+

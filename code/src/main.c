@@ -1,5 +1,7 @@
 #include "common.h"
 #include "zigzag.h"
+#include "spiral.h"
+#include "respiral.h"
 #include "zamboni.h"
 
 #define L_X_P 1 
@@ -30,25 +32,10 @@ int main(int argc,char *argv[]){
 		return 0;
 	}
 	//argv
-	//get current time
-	time_t t = time(NULL);
-	struct tm tm = *localtime(&t);
 	
 
 	int square_l = Grid_Length * 3 - 2;
 	//Create file name based on current time
-	char filename[100];
-#ifdef ZAMBONI_MODE
-	snprintf(filename, sizeof(filename), "output/zamboni/result_%04d%02d%02d_%02d%02d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
-#else
-	snprintf(filename, sizeof(filename), "output/zigzag/result_%04d%02d%02d_%02d%02d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
-#endif
-	//open file
-	fp = fopen(filename, "w");
-	if(fp == NULL){
-		printf("Error: cannot open file\n");
-		return 1;
-	}
 
 	int CS_num = atoi(argv[1]);	//charging station number
 	
@@ -78,22 +65,8 @@ int main(int argc,char *argv[]){
 	}
 	
 	//initialize array	
-	for (int i = 0; i < square_l; i++)
-	{
-			for(int j = 0; j < square_l; j++)
-			{
-				//boarder
-				if(i == 0 || i == Grid_Length - 1 || i == 2 * Grid_Length - 2 || i == 3 * Grid_Length - 3 || j == 0 || j == Grid_Height - 1 || j == 2 * Grid_Height - 2 || j == 3 * Grid_Height - 3){
-					Array[i][j] = -1;
-				//double spray zone
-				}else if(i > 0 && i <= 2 || i < Grid_Length - 1 && i >= Grid_Length - 3 || i >= Grid_Length && i < Grid_Length + 2 || i >= 2 * Grid_Length - 4 && i < 2 * Grid_Length - 2 || i >= 2 * Grid_Length - 1 && i < 2 * Grid_Length + 1 || i >= 3 * Grid_Length - 5 && i < 3 * Grid_Length - 3 ||j > 0 && j <= 2 || j < Grid_Height - 1 && j >= Grid_Height - 3 || j >= Grid_Height && j < Grid_Height + 2 || j >= 2 * Grid_Height - 4 && j < 2 * Grid_Height - 2 || j >= 2 * Grid_Height - 1 && j < 2 * Grid_Height + 1 || j >= 3 * Grid_Height - 5 && j < 3 * Grid_Height - 3){
-					Array[i][j] = 2;
-				//single spray zone
-				}else{
-					Array[i][j] = 1;
-				}
-			}
-	}
+	
+	fill_grid(Array, square_l, Grid_Length, Grid_Height, true);
 	set_random_seed();
 	
 	set_charge_station(Array, cs_arr, CS_num, Grid_Length, square_l);
@@ -107,18 +80,30 @@ int main(int argc,char *argv[]){
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, Grid_Height);
 	//zamboni(Array, Grid_Length, Grid_Height);
 #else
-	zigzag(Array, cs_arr, CS_num, Grid_Length, L_X_P, L_Y_P);
-	zigzag(Array, cs_arr, CS_num, Grid_Length, R_X_P, R_Y_P);
-	zigzag(Array, cs_arr, CS_num, Grid_Length, U_X_P, U_Y_P);
-	zigzag(Array, cs_arr, CS_num, Grid_Length, D_X_P, D_Y_P);
-	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
+	//zigzag(Array, cs_arr, CS_num, Grid_Length, L_X_P, L_Y_P);
+	//zigzag(Array, cs_arr, CS_num, Grid_Length, R_X_P, R_Y_P);
+	//zigzag(Array, cs_arr, CS_num, Grid_Length, U_X_P, U_Y_P);
+	//zigzag(Array, cs_arr, CS_num, Grid_Length, D_X_P, D_Y_P);
+	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, true);
+
+	/*fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	zamboni(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);*/
+	
+	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
+	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	//R_spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
+	//spiral(Array, cs_arr, CS_num, Grid_Length, 1, 1);
+	R_spiral(Array, cs_arr, CS_num, Grid_Length, 1, 1);
 #endif
-	printf("Finish\n");
+	//printf("Finish\n");
 #ifdef DEBUG_MODE
 	print_array(Array, square_l, square_l);
 #elif TEST_MODE
-	print_array(Array, square_l, square_l);
+	//print_array(Array, square_l, square_l);
 #endif
+	printf("Battery VM: %lf\n", Battery_VM);
+	printf("Battery VN: %lf\n", Battery_VN);
 
 //	for(int i = 0; i < CS_num; i++){
 //		printf("Charging station %d: %d\n", i, cs_arr[i]);
@@ -135,6 +120,5 @@ int main(int argc,char *argv[]){
 		free(Array[i]);
 	}
 	free(Array);
-	fclose(fp);
 	return 0;
 }
