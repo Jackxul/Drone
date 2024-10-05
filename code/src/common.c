@@ -207,6 +207,7 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 				arr[cs_arr[GRID_UP][2] % arr_length + 1][2 * (arr_length - 1)] = -8;	//右邊從高度1開始
 				break;
 			default:
+				printf("hello\n");
 				break;
 		}
 	}
@@ -469,13 +470,35 @@ void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int
 		}
 	}
 }
-void set_multi(double *time){
-	printf("time = %f\n", *time);
-	printf("UNIQUE_GRID_NUMBER = %d\n", UNIQUE_GRID_NUMBER);
-	printf("skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER) = %f\n", skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER));
-	*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER);
-
-	//*time *= Battery_Multi;
+void set_multi(double *time, int c_value){
+	double temp = *time;
+	switch(c_value){
+		case 0: //None random
+			//do nothing
+			break;
+		case 1: //random low
+			printf("time before = %f\n", *time);
+			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 5 * log(UNIQUE_GRID_NUMBER));
+			printf("time after = %f\n", *time);
+			printf("Ratio = %.4f\n", *time / temp);
+			break;
+		case 2://random medium
+		       	printf("time before = %f\n", *time);
+			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 3 * log(UNIQUE_GRID_NUMBER));
+			printf("time after = %f\n", *time);
+			printf("Ratio = %.4f\n", *time / temp);
+			break;
+		case 3://special random format
+			printf("time before = %f\n", *time);
+		       	*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER);
+			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 5 * log(UNIQUE_GRID_NUMBER));
+			printf("time after = %f\n", *time);
+			printf("Ratio = %.4f\n", *time / temp);
+			break;
+		default:
+			printf("Error: c_value is out of range\n");
+			exit(0);
+	}
 }
 
 void fill_grid(int **arr, int square_l, int arr_length, int arr_height, bool boader_set) {

@@ -84,17 +84,18 @@ int main(int argc,char *argv[]){
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, R_X_P, R_Y_P);
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, U_X_P, U_Y_P);
 	//zigzag(Array, cs_arr, CS_num, Grid_Length, D_X_P, D_Y_P);
-	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, true);
-
-	/*fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
-	zamboni(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);*/
 	
+	//Zigzag
+	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, true);
 	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	//Zamboni
+	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, false);
+	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	//Spiral
 	spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
 	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
-	//R_spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
-	//spiral(Array, cs_arr, CS_num, Grid_Length, 1, 1);
-	R_spiral(Array, cs_arr, CS_num, Grid_Length, 1, 1);
+	//Reverse-Spiral
+	R_spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
 #endif
 	//printf("Finish\n");
 #ifdef DEBUG_MODE
@@ -102,8 +103,6 @@ int main(int argc,char *argv[]){
 #elif TEST_MODE
 	//print_array(Array, square_l, square_l);
 #endif
-	printf("Battery VM: %lf\n", Battery_VM);
-	printf("Battery VN: %lf\n", Battery_VN);
 
 //	for(int i = 0; i < CS_num; i++){
 //		printf("Charging station %d: %d\n", i, cs_arr[i]);

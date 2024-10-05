@@ -8,6 +8,9 @@ int S_Charge_time = 0;
 int S_Current_Height = 0;
 int S_Current_Speed = 2;
 
+#define turn_time_penalty STP
+#define turn_energy_penalty SEP
+
 /*
  *
  *Spiral algorithm
@@ -18,15 +21,39 @@ int S_Current_Speed = 2;
  *
  * */
 
-int is_valid(int **arr, int square_l, int cx, int cy, int dir) { //check if the next position is valid(-1 or 0)
+int is_valid(int **arr, int square_l, int cx, int cy, int dir, float *energy_consume, float *time_consume) { //check if the next position is valid(-1 or 0)
 	if(dir == UP){
-		return (arr[cy - 1][cx] > 0 ? UP : RIGHT);
+		if(arr[cy - 1][cx] > 0){
+			return UP;
+		}else{
+			*energy_consume -= turn_energy_penalty;
+			*time_consume *= turn_time_penalty;
+			return RIGHT;
+		}
 	}else if(dir == DOWN){
-		return (arr[cy + 1][cx] > 0 ? DOWN : LEFT);
+		if(arr[cy + 1][cx] > 0){
+			return DOWN;
+		}else{
+			*energy_consume -= turn_energy_penalty;
+			*time_consume *= turn_time_penalty;
+			return LEFT;
+		}
 	}else if(dir == LEFT){
-		return (arr[cy][cx - 1] > 0 ? LEFT : UP);
+		if(arr[cy][cx - 1] > 0){
+			return LEFT;
+		}else{
+			*energy_consume -= turn_energy_penalty;
+			*time_consume *= turn_time_penalty;
+			return UP;
+		}
 	}else if(dir == RIGHT){
-		return (arr[cy][cx + 1] > 0 ? RIGHT : DOWN);
+		if(arr[cy][cx + 1] > 0){
+			return RIGHT;
+		}else{
+			*energy_consume -= turn_energy_penalty;
+			*time_consume *= turn_time_penalty;
+			return DOWN;
+		}
 	}else{
 		printf("Error: invalid direction\n");
 		exit(1);
@@ -105,7 +132,7 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 				}
 				set_current_speed(&S_Current_Speed); //set current speed to 2
 			}
-			switch(is_valid(arr, square_l, x, y, dir)){
+			switch(is_valid(arr, square_l, x, y, dir, &life, &used_time)){
 				case UP:
 					printf("max_cells: %ld\n", max_cells);
 					y--;

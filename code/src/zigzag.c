@@ -3,15 +3,17 @@
 #include <unistd.h>
 
 
+#define time_penalty ZTP
+#define energy_penalty ZEP
 int Charge_time = 0;
 int Current_Height = 0;
 int Current_Speed = 2;
 bool status = true; //true: working, false: need to charge
-static float zam_life = Battery_Capacity * 60.0; //to second
-static float zam_used_time = 0; //used_time
-static float zam_used_pesticide = 0; //used_pesticide
-static float zam_energy = 0; //used_energy
-static int zam_charge_time = 0; //charge_time counter
+static double zam_life = Battery_Capacity * 60.0; //to second
+static double zam_used_time = 0; //used_time
+static double zam_used_pesticide = 0; //used_pesticide
+static double zam_energy = 0; //used_energy
+static double zam_charge_time = 0; //charge_time counter
 
 
 /*
@@ -38,7 +40,19 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 			printf("Error: cannot open file\n");
 			return 1;
 		}
+	}else{
+		//get current time
+		time_t t = time(NULL);
+		struct tm tm = *localtime(&t);
+		char filename[100];
+		snprintf(filename, sizeof(filename), "output/zamboni/result_%04d%02d%02d_%02d%02d%2d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+		fp = fopen(filename, "w");
+		if(fp == NULL){
+			printf("Error: cannot open file\n");
+			return 1;
+		}
 	}
+
 	float life = Battery_Capacity * 60.0; //to second
 	if(check){
 		zam_life = life;
@@ -168,7 +182,8 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 				temp = x_base + square_length - 3;
 				dir_x = -1;
 				dir_y = false;
-				energy += 2.5;
+				life -= energy_penalty;
+				used_time *= time_penalty;
 				//JPrintf("check point --> \n");
 #ifdef DEBUG_MODE
 				JPrintf("dir_y = %d\n", dir_y);
@@ -193,19 +208,16 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 				JPrintf("temp change = %d\n", temp);
 				JPrintf("dir_y = %d\n", dir_y);
 				JPrintf("j = %d\n", j);
-				energy += 2.5;
+				life -= energy_penalty;
+				used_time *= time_penalty;
 #endif
 			}
 			//JPrintf("check point 2\n");
 			//int static count = 0;
 		}
 	}
+	
 	if(check){
-		zam_used_time = used_time;
-		zam_used_pesticide = used_pesticide;
-		zam_energy = energy;
-		zam_charge_time = charge_time;
-
 	//	JPrintf("Battery_life: %.4f\n", life);
 	//	JPrintf("Pesticide_amount: %.4f\n", trip);
 		JPrintf(" ====================================================\n");
@@ -217,17 +229,22 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 		JPrintf(" ====================================================\n");
 		fclose(fp);
 	}else{
-		set_multi(&zam_used_time);
-		set_multi(&zam_used_pesticide);
-		set_multi(&zam_energy);
-		set_multi(&zam_charge_time);
+		zam_used_time = used_time;
+		zam_used_pesticide = used_pesticide;
+		zam_energy = energy;
+		zam_charge_time = charge_time;
+		
+		set_multi(&zam_used_pesticide, 0);
+		set_multi(&zam_charge_time, 1);
+		set_multi(&zam_used_time, 2);
+		set_multi(&zam_energy, 2);
 		printf("set_multi\n");
 
 		JPrintf(" ====================================================\n");
-		JPrintf("|   Zigzag Algorithm                               |\n");
+		JPrintf("|   Zamboni Algorithm                               |\n");
 		JPrintf("|   Used time: %18.4f                    |\n", zam_used_time);
 		JPrintf("|   Used pesticide: %12.4f                     |\n", zam_used_pesticide);
-		JPrintf("|   Charging time count: %2d                          |\n", zam_charge_time);
+		JPrintf("|   Charging time count: %2d                          |\n", (int)(zam_charge_time / 1));
 		JPrintf("|   Energy: %25.4f             |\n", zam_energy * Power_Watt);
 		JPrintf(" ====================================================\n");
 		fclose(fp);	

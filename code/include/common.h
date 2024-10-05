@@ -13,15 +13,18 @@ extern FILE *fp;
 extern FILE *sp_fp;
 
 
+#define UNIQUE_GRID_NUMBER 10
+
 #ifdef TEST_MODE
 	#define Grid_Length 10
 	#define Grid_Height 10
 #else
+	#undef UNIQUE_GRID_NUMBER
+	#define UNIQUE_GRID_NUMBER 30
 	#define Grid_Length 30
 	#define Grid_Height 30
 #endif
 
-#define UNIQUE_GRID_NUMBER 1
 
 #ifdef GRID_SIZE
 	#undef Grid_Length
@@ -80,6 +83,6 @@ void print_array(int **arr, int arr_length, int arr_height);
 void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int arr_height);
 void set_current_speed(int *Current_Speed);
 void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height, int point_cx, int point_cy, int *dx, int *dy);
-void set_multi(double *time);
+void set_multi(double *time, int c_value);
 void fill_grid(int **arr, int square_l, int arr_length, int arr_height, bool boader_set);
 #endif /* COMMON_H */

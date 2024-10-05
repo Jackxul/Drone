@@ -7,6 +7,9 @@
 int RS_Charge_time = 0;
 int RS_Current_Height = 0;
 int RS_Current_Speed = 2;
+
+#define turn_time_penalty STP
+#define turn_energy_penalty SEP
 //
 /*
  *
@@ -20,21 +23,26 @@ int RS_Current_Speed = 2;
 
 static int max_l = 1;
 
-int R_is_valid(int **arr, int square_l, int dir, int *count, int *travel_l) { //for decision of when should turn the direction of respiral
+int R_is_valid(int **arr, int square_l, int dir, int *count, int *travel_l, float *energy_consume, float *time_consume) { //for decision of when should turn the direction of respiral
 	*travel_l -= 1;
 	bool flag = false; //ture for turn the direction
-	if(*travel_l == 0 && *count == 0){ //need to turn the direction and increase the length
-		max_l += 1; //next length will increase 1 in respiral
-		*count = 2; //recharge the count to 2 for next turn
-		*travel_l = max_l; //recharge the travel_l
-		flag = true; //turn the direction
-	}else if(*travel_l == 0 && *count == 1){ //need to turn the direction
+	if(*travel_l == 0){ //need to turn the direction and increase the length
 		*count -= 1; //decrease the count to 1 for next turn
-		*travel_l = max_l; //recharge the travel_l
+		if(*count == 0){
+			max_l += 1; //next length will increase 1 in respiral
+			*count = 2; //recharge the count to 2 for next turn
+			*travel_l = max_l; //recharge the travel_l
+		}else{
+			*travel_l = max_l; //recharge the travel_l
+		}
 		flag = true; //turn the direction
+		*energy_consume -= turn_energy_penalty;
+		*time_consume *= turn_time_penalty;
+		printf("debug1\n");
 	}else{ 
 		flag = false;
 		//do nothing
+		printf("debug2\n");
 	}
 	//turn the direction
 	if(dir == UP){
@@ -58,8 +66,8 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 	int center_y = (square_l % 2 == 0 ) ? center_x + 1 : center_x; // if even, center_y is at the left-bottom coner of the center square
 	
 	int final_x, final_y;
-	final_x = x_base + center_x - 1;
-	final_y = y_base + center_y - 1;
+	final_x = x_base + center_x - 2;
+	final_y = y_base + center_y - 2;
 	int dir = (square_l % 2 == 0 ? RIGHT : LEFT);  // if even, start from right, else start from left
     	int max_cells = pow(square_l - 2, 2); // 方形內的總格子數 (1 center + 1 + 1 + 2 + 2 + ... + n-1 + n-1 + n + n + n ends)
 	int loop_count = 1, tail_route_count = 0;
@@ -115,14 +123,18 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 	energy += 0.5;
 	max_cells--;
 	
-	final_x = (square_l % 2 == 0 ? final_x++ : final_x--);
+	printf("R_spiral debug3 final_x = %d , final_y = %d\n", final_x, final_y);
+	
+	final_x += (square_l % 2 == 0 ? 1 : -1);
 
+	printf("R_spiral debug4 final_x = %d , final_y = %d\n", final_x, final_y);
 
     	while (max_cells) {
-        // 檢查當前位置是否合法（在該方形內且不為邊界）
 		trip -= arr[final_y][final_x] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 		used_pesticide += arr[final_y][final_x] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 		arr[final_y][final_x] = 0;
+		printf("[ x , y ] --> [ %d , %d ]\n", final_x, final_y);
+		printf("travel_count: %d\n", travel_length);
 #ifdef DEBUG_MODE
 		JPrintf("[ x , y ] --> [ %d , %d ]\n", final_x, final_y);
 #endif
@@ -131,11 +143,32 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 		energy += 0.5;
 		//print_array(arr, square_l, square_l);
 		max_cells--;
+		if(life <= 0){
+			JPrintf("Battery is out of power\n");
+			set_current_speed(&RS_Current_Speed); //set current speed to 10
+			
+			life = Battery_Capacity * 60.0;//Battery recharge
+			trip = Pesticide;//Pesticide refill
+			charge_time += 1;//charge time counter
+
+			if(CS_num == 1){
+				printf("respiral debug3\n");
+				life -= (single_zigzag_charge( final_y, final_x, RS_Current_Speed ) / 2 ); //half of the time is used to fly to the power out position
+				used_time += (single_zigzag_charge( final_y, final_x, RS_Current_Speed ) / 2 );
+				energy += (single_zigzag_charge( final_y, final_x, RS_Current_Speed ) / 2 );
+			}else{
+				printf("respiral debug4\n");
+				find_nearest_cs(cs_arr, CS_num, square_l, square_l, final_y, final_x, &nearest_cs_dx, &nearest_cs_dy);
+				life -= (multi_zigzag_charge( final_y, final_x, nearest_cs_dx, nearest_cs_dy, RS_Current_Speed ) / 2 ); //half of the time is used to fly to the power out position
+				used_time += (multi_zigzag_charge( final_y, final_x, nearest_cs_dx, nearest_cs_dy, RS_Current_Speed ) / 2 );
+				energy += (multi_zigzag_charge( final_y, final_x, nearest_cs_dx, nearest_cs_dy, RS_Current_Speed ) / 2 );
+			}
+			set_current_speed(&RS_Current_Speed); //set current speed to 2
+		}
 #ifdef DEBUG_MODE
 		print_array(arr, square_l, square_l);
 #endif
-		print_array(arr, square_l, square_l);
-		switch(R_is_valid(arr, square_l, dir, &travel_count, &travel_length)){
+		switch(R_is_valid(arr, square_l, dir, &travel_count, &travel_length, &life, &used_time)){
 			case UP:
 				printf("max_cells: %d\n", max_cells);
 				final_y--;
@@ -165,6 +198,7 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 	
 
 	JPrintf(" ====================================================\n");
+	JPrintf("| RESPIRAL ALGORITHM                               |\n");
 	JPrintf("|   Used time: %18.4f                    |\n", used_time);
 	JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
 	JPrintf("|   Charging time count: %2d                          |\n", charge_time);

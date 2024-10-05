@@ -14,11 +14,16 @@ OBJ:=$(patsubst $(S_DIR)/%.c,$(B_DIR)/%.o,$(SRC))
 
 BVM = 0.9758142
 BVN = 0.3717309
+STP = 1.0013
+SEP = 2.5
+ZTP = 1.0031
+ZEP = 7.5
 db ?= 0
 test ?= 0
 grid ?= 0
 za ?= 0
-CFLAGS += -D BVM=$(BVM) -D BVN=$(BVN)
+
+CFLAGS += -D BVM=$(BVM) -D BVN=$(BVN) -D STP=$(STP) -D SEP=$(SEP) -D ZTP=$(ZTP) -D ZEP=$(ZEP)	
 
 
 ifeq ($(db), 1)
