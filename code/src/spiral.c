@@ -81,6 +81,7 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
+	int travel_distance = 0;
 	int x = x_base, y = y_base; //start position 
 	int dir = RIGHT;  // 方向的指標，從右方向開始
 	int final_x, final_y;
@@ -101,6 +102,7 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 			//JPrintf("[ x , y ] --> [ %d , %d ]\n", x, y);
 #endif
 			life -= 0.5;
+			travel_distance ++;
 			used_time += 0.5;
 			energy += 0.5;
 #ifdef DEBUG_MODE			
@@ -111,7 +113,7 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 #endif
 			max_cells--;
 			if(life <= 0){
-				JPrintf("Battery is out of power\n");
+				printf("Battery is out of power\n");
 				set_current_speed(&S_Current_Speed); //set current speed to 10
 				
 				life = Battery_Capacity * 60.0;//Battery recharge
@@ -168,11 +170,13 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 
 
 	JPrintf(" ====================================================\n");
-	JPrintf("|   Spiral Algorithm                               |\n");
+	JPrintf("|   Spiral Algorithm                                 |\n");
+	JPrintf("|   Grid Length: %d (square)                        |\n", square_l);
+	JPrintf("|   Travel distance: %12d ( m )              |\n", travel_distance);
 	JPrintf("|   Used time: %18.4f                    |\n", used_time);
 	JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
 	JPrintf("|   Charging time count: %2d                          |\n", charge_time);
-	JPrintf("|   Energy: %25.4f             |\n", energy * Power_Watt);
+	JPrintf("|   Energy: %25.4f                |\n", energy * Power_Watt);
 	JPrintf(" ====================================================\n");
 	fclose(sp_fp);
 	return 0;

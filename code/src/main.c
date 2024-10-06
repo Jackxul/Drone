@@ -88,14 +88,18 @@ int main(int argc,char *argv[]){
 	//Zigzag
 	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, true);
 	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+
 	//Zamboni
 	zigzag(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P, false);
 	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	
 	//Spiral
 	spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
 	fill_grid(Array, square_l, Grid_Length, Grid_Height, false);
+	
 	//Reverse-Spiral
 	R_spiral(Array, cs_arr, CS_num, Grid_Length, M_X_P, M_Y_P);
+
 #endif
 	//printf("Finish\n");
 #ifdef DEBUG_MODE

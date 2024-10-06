@@ -14,6 +14,7 @@ static double zam_used_time = 0; //used_time
 static double zam_used_pesticide = 0; //used_pesticide
 static double zam_energy = 0; //used_energy
 static double zam_charge_time = 0; //charge_time counter
+static int zam_travel_distance = 0; //travel_distance
 
 
 /*
@@ -65,6 +66,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
+	int travel_distance = pow((square_length - 2), 2) + square_length - 2 - 1;
 	int temp = x_base;//base variable (use to control the initial number of j(1/square_length - 1))
 	int dir_x = 1;//direction variable (use to control the direction of zigzag)
 	bool dir_y = true;//direction variable (use to check the direction of zigzag)
@@ -94,24 +96,24 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 				print_array(arr, square_length, square_length);
 #endif
 			}else if(arr[i][j] >= 1 && life <= 0 && trip > 0){
-				JPrintf("Battery is out of power\n");
+				printf("Battery is out of power\n");
 				/*
 				 *do charging and calculation
 				 */
 				
 	/*set speed*/		set_current_speed(&Current_Speed); //set the current speed to 10
 				
-				JPrintf("***********************************************\n");
-				JPrintf("*    Fly toward charging station              *\n");
+				printf("***********************************************\n");
+				printf("*    Fly toward charging station              *\n");
 				if(CS_num == 1){
-					JPrintf("*    Position: ( %3d , %3d ) --> ( 1 , 1 )    *\n", i, j);
+					printf("*    Position: ( %3d , %3d ) --> ( 1 , 1 )    *\n", i, j);
 				}else{
 					find_nearest_cs(cs_arr, CS_num, square_length, square_length, i, j, &nearest_cs_dx, &nearest_cs_dy);
-					JPrintf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n", i, j, nearest_cs_dx, nearest_cs_dy);
+					printf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n", i, j, nearest_cs_dx, nearest_cs_dy);
 				}
 				
-				JPrintf("*    Current Speed: %2d			      *\n", Current_Speed);
-				JPrintf("***********************************************\n");
+				printf("*    Current Speed: %2d			      *\n", Current_Speed);
+				printf("***********************************************\n");
 				
 				//initial
 				life = Battery_Capacity * 60.0; //Battery recharge
@@ -129,35 +131,35 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 					energy += multi_zigzag_charge( i , j , nearest_cs_dx, nearest_cs_dy , Current_Speed );
 				}
 
-				JPrintf("*    Charging . . . . . . . . . . . . . .     *\n");
-				nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
-				JPrintf("*    Charging Done                            *\n");
-				nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
+				printf("*    Charging . . . . . . . . . . . . . .     *\n");
+				//nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
+				printf("*    Charging Done                            *\n");
+				//nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
 				
 	/*set speed*/		set_current_speed(&Current_Speed); //set the current speed to 2
 				
-				JPrintf("***********************************************\n");
-				JPrintf("*    Fly toward power out position            *\n");
+				printf("***********************************************\n");
+				printf("*    Fly toward power out position            *\n");
 				if(CS_num == 1){
-					JPrintf("*    Position: ( 1 , 1 ) --> ( %3d , %3d )    *\n", i, j);
+					printf("*    Position: ( 1 , 1 ) --> ( %3d , %3d )    *\n", i, j);
 				}else{
-					JPrintf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n)", nearest_cs_dx, nearest_cs_dy, i, j);
+					printf("*    Position: ( %3d , %3d ) --> ( %3d , %3d )*\n)", nearest_cs_dx, nearest_cs_dy, i, j);
 				}
 				
-				JPrintf("*    Current Speed: %2d                        *\n", Current_Speed);
-				JPrintf("***********************************************\n");
-				nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
+				printf("*    Current Speed: %2d                        *\n", Current_Speed);
+				printf("***********************************************\n");
+				//nanosleep((const struct timespec[]){{0, 200000000L}}, NULL);
 
 
 				trip -= arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
 
 				used_pesticide += arr[i][j] * N_F / P_H_TCrop * P_H_CCrop / 60.0 * 0.5;
-				JPrintf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
+				printf("Current position: #[%d, %d] %d --> %d\n", i, j, arr[i][j], 0);
 				arr[i][j] = 0;
 #ifdef DEBUG_MODE
-				JPrintf("CHARGING_DONE\n");
-				JPrintf("i --> %d\n", i);
-				JPrintf("j --> %d\n", j);
+				printf("CHARGING_DONE\n");
+				printf("i --> %d\n", i);
+				printf("j --> %d\n", j);
 #endif
 				life -= 0.5;
 				used_time += 0.5;
@@ -169,7 +171,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 
 
 			}else if(arr[i][j] >= 1 && life > 0 && trip <= 0){
-				JPrintf("Pesticide is empty\n");
+				printf("Pesticide is empty\n");
 				//save the current position into the queue
 				/*
 				 *do pesticide refill and calculation
@@ -177,7 +179,7 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 				exit(0);
 			}else if(dir_y & (j == x_base + square_length - 2)){
 #ifdef DEBUG_MODE
-				JPrintf("temp change = %d\n", temp);
+				printf("temp change = %d\n", temp);
 #endif
 				temp = x_base + square_length - 3;
 				dir_x = -1;
@@ -221,11 +223,13 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 	//	JPrintf("Battery_life: %.4f\n", life);
 	//	JPrintf("Pesticide_amount: %.4f\n", trip);
 		JPrintf(" ====================================================\n");
-		JPrintf("|   Zigzag Algorithm                               |\n");
+		JPrintf("|   Zigzag Algorithm                                 |\n");
+		JPrintf("|   Grid Length: %d (square)                        |\n", square_length);
+		JPrintf("|   Travel distance: %12d m                  |\n", travel_distance);
 		JPrintf("|   Used time: %18.4f                    |\n", used_time);
 		JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
 		JPrintf("|   Charging time count: %2d                          |\n", charge_time);
-		JPrintf("|   Energy: %25.4f             |\n", energy * Power_Watt);
+		JPrintf("|   Energy: %25.4f                |\n", energy * Power_Watt);
 		JPrintf(" ====================================================\n");
 		fclose(fp);
 	}else{
@@ -233,19 +237,23 @@ float zigzag(int **arr, int **cs_arr, int CS_num, int square_length, int x_base,
 		zam_used_pesticide = used_pesticide;
 		zam_energy = energy;
 		zam_charge_time = charge_time;
+		zam_travel_distance = travel_distance;
 		
 		set_multi(&zam_used_pesticide, 0);
 		set_multi(&zam_charge_time, 1);
 		set_multi(&zam_used_time, 2);
 		set_multi(&zam_energy, 2);
+		set_multi(&zam_travel_distance, 3);
 		printf("set_multi\n");
 
 		JPrintf(" ====================================================\n");
-		JPrintf("|   Zamboni Algorithm                               |\n");
+		JPrintf("|   Zamboni Algorithm                                |\n");
+		JPrintf("|   Grid Length: %d (square)                        |\n", square_length);
+		JPrintf("|   Travel distance: %12d ( m )              |\n", zam_travel_distance / 1);
 		JPrintf("|   Used time: %18.4f                    |\n", zam_used_time);
 		JPrintf("|   Used pesticide: %12.4f                     |\n", zam_used_pesticide);
 		JPrintf("|   Charging time count: %2d                          |\n", (int)(zam_charge_time / 1));
-		JPrintf("|   Energy: %25.4f             |\n", zam_energy * Power_Watt);
+		JPrintf("|   Energy: %25.4f                |\n", zam_energy * Power_Watt);
 		JPrintf(" ====================================================\n");
 		fclose(fp);	
 	}

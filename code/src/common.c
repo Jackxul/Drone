@@ -471,27 +471,43 @@ void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int
 	}
 }
 void set_multi(double *time, int c_value){
-	double temp = *time;
+	double temp = (*time == 0) ? 1 : *time;
+	static double ratio = 0;
 	switch(c_value){
+
+/*	skewed_random(double min, double max, double skew_num)	*/
 		case 0: //None random
 			//do nothing
 			break;
 		case 1: //random low
 			printf("time before = %f\n", *time);
-			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 5 * log(UNIQUE_GRID_NUMBER));
+			if(UNIQUE_GRID_NUMBER < 221){
+				//do nothing	
+			}else{
+				*time *= skewed_random(BVN * 7 / 3, BVM * 19 / 18, UNIQUE_GRID_NUMBER / 5 * log(UNIQUE_GRID_NUMBER));
+			}
 			printf("time after = %f\n", *time);
 			printf("Ratio = %.4f\n", *time / temp);
+			ratio = *time / temp;
 			break;
 		case 2://random medium
 		       	printf("time before = %f\n", *time);
-			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 3 * log(UNIQUE_GRID_NUMBER));
+			temp = *time;
+			//*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 3 * log(UNIQUE_GRID_NUMBER));
+			if(ratio != 0 && temp * ratio > *time){
+				*time = skewed_random(*time, temp * ratio, UNIQUE_GRID_NUMBER / 3 * log(UNIQUE_GRID_NUMBER));
+			}else if(ratio != 0 && temp * ratio < *time){
+				*time = skewed_random(ratio * temp * BVM, *time, UNIQUE_GRID_NUMBER / 3 * log(UNIQUE_GRID_NUMBER));	
+			}else{//no charging count
+				*time *= skewed_random(1.21, 0.989, UNIQUE_GRID_NUMBER / 7 * log(UNIQUE_GRID_NUMBER));
+				printf("debug77\n");
+			}
 			printf("time after = %f\n", *time);
 			printf("Ratio = %.4f\n", *time / temp);
 			break;
 		case 3://special random format
 			printf("time before = %f\n", *time);
-		       	*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER);
-			*time *= skewed_random(BVN, BVM, UNIQUE_GRID_NUMBER / 5 * log(UNIQUE_GRID_NUMBER));
+		       	*time *= skewed_random(1.1548, 1.0262, log(UNIQUE_GRID_NUMBER));
 			printf("time after = %f\n", *time);
 			printf("Ratio = %.4f\n", *time / temp);
 			break;

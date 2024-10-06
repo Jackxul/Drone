@@ -106,6 +106,7 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 	float used_time = 0; //used_time
 	float used_pesticide = 0; //used_pesticide
 	int charge_time = 0; //charge_time counter
+	int travel_distance = 1;
 	int temp = x_base;//base variable (use to control the initial number of j(1/square_length - 1))
 	int nearest_cs_dx = 0;
 	int nearest_cs_dy = 0;
@@ -138,13 +139,15 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 #ifdef DEBUG_MODE
 		JPrintf("[ x , y ] --> [ %d , %d ]\n", final_x, final_y);
 #endif
+
 		life -= 0.5;
+		travel_distance ++;
 		used_time += 0.5;
 		energy += 0.5;
 		//print_array(arr, square_l, square_l);
 		max_cells--;
 		if(life <= 0){
-			JPrintf("Battery is out of power\n");
+			printf("Battery is out of power\n");
 			set_current_speed(&RS_Current_Speed); //set current speed to 10
 			
 			life = Battery_Capacity * 60.0;//Battery recharge
@@ -198,11 +201,13 @@ float R_spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, in
 	
 
 	JPrintf(" ====================================================\n");
-	JPrintf("| RESPIRAL ALGORITHM                               |\n");
+	JPrintf("|   RESPIRAL ALGORITHM                               |\n");
+	JPrintf("|   Grid Length: %d (square)                        |\n", square_l);
+	JPrintf("|   Travel distance: %12d ( m )              |\n", travel_distance);
 	JPrintf("|   Used time: %18.4f                    |\n", used_time);
 	JPrintf("|   Used pesticide: %12.4f                     |\n", used_pesticide);
 	JPrintf("|   Charging time count: %2d                          |\n", charge_time);
-	JPrintf("|   Energy: %25.4f             |\n", energy * Power_Watt);
+	JPrintf("|   Energy: %25.4f                |\n", energy * Power_Watt);
 	JPrintf(" ====================================================\n");
 	fclose(fp);
 	return 0;
