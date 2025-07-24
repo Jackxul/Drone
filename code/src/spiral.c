@@ -8,8 +8,8 @@ int S_Charge_time = 0;
 int S_Current_Height = 0;
 int S_Current_Speed = 2;
 
-#define turn_time_penalty STP
-#define turn_energy_penalty SEP
+#define turn_time_penalty STP //penalty for turning time
+#define turn_energy_penalty SEP //penalty for turning energy
 
 /*
  *
@@ -67,14 +67,14 @@ float spiral(int **arr, int **cs_arr, int CS_num, int square_l, int x_base, int 
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 	char filename[100];	
-	snprintf(filename, sizeof(filename), "output/spiral/result_%04d%02d%02d_%02d%02d%2d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	sp_fp = fopen(filename, "w");
+	snprintf(filename, sizeof(filename), "output/spiral/result_%04d%02d%02d_%02d%02d%2d.txt", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec); // create filename with current time
+	sp_fp = fopen(filename, "w"); // open file to write
 	if(sp_fp == NULL){
 		printf("Error: cannot open file\n");
 		return 1;
 	}
 	printf("spiral debug1\n");
-	float life = Battery_Capacity * 60.0; //to second
+	float life = Battery_Capacity * 60.0; // Battery life in seconds
 	JPrintf("Battery Capacity: %f sec\n", life);
 	float trip = Pesticide;
 	float energy = 0;

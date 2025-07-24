@@ -35,8 +35,8 @@ extern FILE *sp_fp;
 	#define UNIQUE_GRID_NUMBER GRID_SIZE //for setting random seed
 #endif
 
-#define PRIME1 31
-#define PRIME2 37
+#define PRIME1 31 //prime number 1 for random seed 
+#define PRIME2 37 //prime number 2 for random seed
 #define Speed 2 /* (m/s) */		// = (1m/0.5s)
 #define Droplet 330 /* (m^3/s) */
 #define Height 5 /* (m) */

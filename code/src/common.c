@@ -5,7 +5,7 @@ FILE *fp;
 FILE *sp_fp;
 
 // Declare the custom printf function
-void JPrintf(const char *format, ...) {
+void JPrintf(const char *format, ...) { // Custom printf function
     va_list args;
 
     // Print to console
@@ -25,13 +25,13 @@ void JPrintf(const char *format, ...) {
     //    va_end(args);
     //}
 }
-int single_cs[4] = {
+int single_cs[4] = { //single charging station postion
 	UP,
 	DOWN,
 	LEFT,
 	RIGHT
 };
-int double_cs[6][2] = {
+int double_cs[6][2] = { //double charging station postion
 	{UP,DOWN},
 	{UP,LEFT},
 	{UP,RIGHT},
@@ -39,14 +39,14 @@ int double_cs[6][2] = {
 	{DOWN,RIGHT},
 	{LEFT,RIGHT}
 };
-int triple_cs[4][3] = {
+int triple_cs[4][3] = { //triple charging station postion
 	{UP,DOWN,LEFT},
 	{UP,DOWN,RIGHT},
 	{UP,LEFT,RIGHT},
 	{DOWN,LEFT,RIGHT}
 };
 
-unsigned int combine_primes_with_time(unsigned int prime1, unsigned int prime2) {
+unsigned int combine_primes_with_time(unsigned int prime1, unsigned int prime2) { //random seed generator
 	//get current time
 	unsigned int current_time = (unsigned int)time(NULL);
 	//combine two prime numbers with current time
@@ -57,7 +57,7 @@ void set_random_seed() {
 	//set random seed
 	srand(seed);
 }
-double skewed_random(double min, double max, double skew_num){
+double skewed_random(double min, double max, double skew_num){ // Generate a skewed random number
 
 	double rand_r = (double)rand() / RAND_MAX; // 0 ~ 1
 	// Apply logarithmic scaling to the grid value for wider range control
@@ -67,17 +67,17 @@ double skewed_random(double min, double max, double skew_num){
 	rand_r = pow(rand_r, skew_factor); // Skew the random number
 	return min + rand_r * (max - min);
 }
-int rand_time(int min, int max)
+int rand_time(int min, int max) // Generate a random time between min and max
 {
 	return min + rand() % (max - min + 1);
 }
 //sqrt
-double distance(int x1, int y1, int x2, int y2)
+double distance(int x1, int y1, int x2, int y2) // Calculate the distance between two points
 {
 	return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
 }
 //time calculate
-void print_array(int **arr, int arr_length, int arr_height){
+void print_array(int **arr, int arr_length, int arr_height){ // Print the array
 	for(int i = 0; i < arr_length; i++){
 		for(int j = 0; j < arr_height; j++){
 			printf("%2d ", arr[i][j]);
@@ -85,7 +85,7 @@ void print_array(int **arr, int arr_length, int arr_height){
 		printf("\n");
 	}
 }
-void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int square_l){
+void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int square_l){ // set charging station function
 /*
  *up 	--> 1
  *down	--> 2
@@ -426,7 +426,7 @@ void set_charge_station(int **arr, int **cs_arr, int CS_num, int arr_length, int
 	}
 	
 }
-void set_current_speed(int *Current_Speed){
+void set_current_speed(int *Current_Speed){ // set current speed function
 	int const charging_speed = 10;
 	int const spraying_speed = 2;
 	
@@ -439,7 +439,7 @@ void set_current_speed(int *Current_Speed){
 		exit(0);
 	}
 }
-void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int point_cx, int point_cy, int *dx, int *dy){
+void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int point_cx, int point_cy, int *dx, int *dy){ // find nearest charging station function
 	int temp_dx = 0;
 	int temp_dy = 0;
 	float cs_distance = distance( 0 , 0 , arr_length - 1 , arr_height - 1);
@@ -470,7 +470,7 @@ void find_nearest_cs(int *cs_arr, int CS_num, int arr_length, int arr_height,int
 		}
 	}
 }
-void set_multi(double *time, int c_value){
+void set_multi(double *time, int c_value){ //set time to random value
 	double temp = (*time == 0) ? 1 : *time;
 	static double ratio = 0;
 	switch(c_value){
@@ -517,7 +517,7 @@ void set_multi(double *time, int c_value){
 	}
 }
 
-void fill_grid(int **arr, int square_l, int arr_length, int arr_height, bool boader_set) {
+void fill_grid(int **arr, int square_l, int arr_length, int arr_height, bool boader_set) { //set grid to orginal value
     for (int i = 0; i < square_l; i++) {
         for (int j = 0; j < square_l; j++) {
             // 邊界檢查

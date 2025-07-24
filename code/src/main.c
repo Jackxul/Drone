@@ -4,6 +4,7 @@
 #include "respiral.h"
 #include "zamboni.h"
 
+//define UP, DOWN, LEFT, RIGHT Grid edge points in coordinates
 #define L_X_P 1 
 #define L_Y_P Grid_Height
 #define R_X_P (2 * Grid_Length - 1)
@@ -16,7 +17,7 @@
 #define M_Y_P Grid_Height
 
 
-void check(bool status ,int Current_Speed, int Current_Height){	
+void check(bool status ,int Current_Speed, int Current_Height){ // check if the current speed and height are valid	
 	if(!status){
 		Current_Speed = 10;
 		Current_Height = 20;
@@ -25,7 +26,7 @@ void check(bool status ,int Current_Speed, int Current_Height){
 
 
 //main
-int main(int argc,char *argv[]){
+int main(int argc,char *argv[]){ // argc: number of arguments, argv: array of arguments
 	//argc check
 	if(argc != 2){
 		JPrintf("Usage: %s <input charging station number>\n", argv[0]);
@@ -34,7 +35,7 @@ int main(int argc,char *argv[]){
 	//argv
 	
 
-	int square_l = Grid_Length * 3 - 2;
+	int square_l = Grid_Length * 3 - 2; 
 	//Create file name based on current time
 
 	int CS_num = atoi(argv[1]);	//charging station number
