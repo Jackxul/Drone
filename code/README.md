@@ -78,9 +78,10 @@ brew install git make gcc
 To build the project, navigate to the project directory and run:
 
 ```bash
-make # This compiles the source files and creates the executable
-make clean # This removes the build artifacts
-make cleanall # This removes all build artifacts and the executable
+make grid="number" # Replace "number" with the grid size (e.g., 10, 20, 30)
+make db=1 # This enables debug mode, which includes additional checks.
+make clean # This removes executable and object files , but keeps the test data.
+make clean_result # This removes all result files and executables file and object files.
 
 
 ```
